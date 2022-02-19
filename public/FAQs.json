@@ -1,0 +1,19 @@
+{
+    "faqs": [
+        {
+          "category":"COMPUTER FAQS",
+          "question": "My computer does not turn on, what do I do now?",
+          "answer": "First check the computer's power cord to make sure it is completely plugged into the wall socket. If you are using a plug strip, make sure it is completely plugged into the wall socket and that the power switch on the plug strip is turned on. Some plug strips also have a built in circuit breaker which usually looks like a black or red button near the power switch. Press the button to reset it and see if that solves the problem."
+        },
+        {
+           "category":"COMPUTER FAQS",
+           "question":"What do I do when my computer crashes?",
+            "answer":"There are many reasons why a computer may just stop working or \"freeze\". Most of the time there isn't much we can do about it, it is a fact of life that computer programs have become so complex that occasionally users will experience problems even when performing common tasks. When your computer no longer responds to keyboard commands your best bet is to restart the computer."
+        },
+        {
+           "category":"COMPUTER FAQS",
+           "question":"What do I do if my hard disk fails to work?",
+            "answer":"As with most computer errors, your first step is to shut down your computer and restart it. This will help you determine whether or not you actually have a hard disk problem. If the disk is severely damaged then your computer will probably fail to restart properly. If this is the case then contact MCWare IT Solutions, this is a job for the professionals."
+        }
+    ]
+}
