@@ -71,11 +71,10 @@ class TicketController extends Controller
                     'status' => $request->status,
                     //'images'=> $images
                 ]);
-                $this->sendTicketUpdate("newTicket", $ticket->id);
+                // $this->sendTicketUpdate("newTicket", $ticket->id);
             }
             
-            $this->createTrail($ticket->id, 'Ticket', 6, Auth::user()->name." Raised a new ticket(".$request->ticket_id.")!");
-
+            // $this->createTrail($ticket->id, 'Ticket', 6, Auth::user()->name." Raised a new ticket(".$request->ticket_id.")!");
             return $this->jsonResponse([], 1,"Ticket Created Successfully");
         } 
     }

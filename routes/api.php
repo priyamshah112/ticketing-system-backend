@@ -15,6 +15,9 @@ header( 'Access-Control-Allow-Headers: Authorization, Content-Type' );
 |
 */
 Route::group(['prefix' => 'v1'], function(){
+    Route::get('/', function(){
+        return "Welcome To Ticketing System Api Library";
+    });
     Route::post("/login",[App\Http\Controllers\APIs\AuthController::class, 'login']);
     Route::post("/reset",[App\Http\Controllers\APIs\AuthController::class, 'reset']);
     Route::post('/forgot-password', [App\Http\Controllers\APIs\AuthController::class, 'forgot_password']);
