@@ -19,15 +19,15 @@ class Controller extends BaseController
 
     public function sendMail($data){
         $this->data = $data;
-        
+
         //$this->to = explode(",",$this->data['to']);
-        
-        //array_walk($this->to, create_function('&$val', '$val = trim($val);')); 
+
+        //array_walk($this->to, create_function('&$val', '$val = trim($val);'));
         $this->to = array_filter(array_map('trim',explode(",", $this->data['to'])));
 
         Mail::send(['html'=>$data['view']], ['data' => $data['data']], function($message){
             $message->to($this->to)->subject($this->data['subject']);
-            $message->from('bitlead2020@gmail.com', 'RX ');
+            $message->from('zeemzachdev@gmail.com', 'Ticketing System');
         });
          // check for failures
         if (Mail::failures()) {
@@ -50,7 +50,7 @@ class Controller extends BaseController
                 'status_code' => 301,
                 'message' => $msg,
                 'data' => $data
-            ], 400); 
+            ], 400);
         }
         else if($status == 1){
             return response()->json(
@@ -59,7 +59,7 @@ class Controller extends BaseController
                 'status_code' => 200,
                 'message' => $msg,
                 'data' => $data
-            ], $this->successStatus); 
+            ], $this->successStatus);
         }
         else if($status == 2){
             return response()->json(
@@ -67,7 +67,7 @@ class Controller extends BaseController
                 'success' => false,
                 'status_code' => 301,
                 'message' => $msg
-            ], 400); 
+            ], 400);
         }
     }
 
@@ -80,7 +80,7 @@ class Controller extends BaseController
                 array_push($e, $v);
             }
         }
-        return $e; 
+        return $e;
 
     }
 
@@ -96,7 +96,7 @@ class Controller extends BaseController
                 case 2:
                     $message = $user->name." updated an entry in ".$panel."(id: ".$entry_id.")";
                     break;
-                case 3: 
+                case 3:
                     $message = $user->name." deleted an entry in ".$panel."(id: ".$entry_id.")";
                     break;
                 case 4:
@@ -136,7 +136,7 @@ class Controller extends BaseController
                 case 2:
                     $message = $user->name." updated an entry in ".$panel."(id: ".$entry_id.")";
                     break;
-                case 3: 
+                case 3:
                     $message = $user->name." deleted an entry in ".$panel."(id: ".$entry_id.")";
                     break;
                 case 4:
