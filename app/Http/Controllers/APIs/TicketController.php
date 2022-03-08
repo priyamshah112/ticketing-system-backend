@@ -38,6 +38,8 @@ class TicketController extends Controller
             $q->where('status', $request->status);
         })->when(isset($request->subject), function($q) use($request){
             $q->where('subject', 'like', '%'.$request->subject.'%');
+        })->when(isset($request->assigned_to), function($q) use($request){
+            $q->where('assigned_to', $request->assigned_to);
         })->when(isset($request->created_at), function($q) use($request){
             $q->whereDate('created_at', '>='. $request->created_at);
         })->get();
