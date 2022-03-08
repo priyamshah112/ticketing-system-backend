@@ -18,7 +18,7 @@ use URL;
 
 class TicketController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
         $user = Auth::user();
         $tickets = Ticket::with('ticketActivity')->with("user", "support");
 
@@ -34,7 +34,11 @@ class TicketController extends Controller
                 break;
         }
 
-        $tickets = $tickets->get();
+        $tickets = $tickets->when(isset($request->status), function($q) use($request){
+            $q->where('status', $request->status);
+        })->when(isset($request->subject), function($q) use($request){
+            $q->where('subject', 'like', '%'.$request->subject.'%');
+        })->get();
         $users = User::where("userType", "Support")->where("enable", 1)->get();
         //$users = User::select('id','name','email')->where("enable", 1)->get();
         $userSoftwares = Software::where("enable", 1)->where('assigned_to', $user->id)->get();
