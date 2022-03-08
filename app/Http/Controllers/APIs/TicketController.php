@@ -38,6 +38,8 @@ class TicketController extends Controller
             $q->where('status', $request->status);
         })->when(isset($request->subject), function($q) use($request){
             $q->where('subject', 'like', '%'.$request->subject.'%');
+        })->when(isset($request->created_at), function($q) use($request){
+            $q->whereDate('created_at', '>='. $request->created_at);
         })->get();
         $users = User::where("userType", "Support")->where("enable", 1)->get();
         //$users = User::select('id','name','email')->where("enable", 1)->get();
