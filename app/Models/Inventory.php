@@ -11,6 +11,7 @@ class Inventory extends Model
     protected $table = 'inventory';
     protected $primaryKey = 'id';
     protected $fillable = [
+        'asset_name',
         'device_name',
         'unit_price',
         'description',
