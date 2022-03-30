@@ -15,23 +15,29 @@ class SoftwareController extends Controller
     public function index(Request $request){
         
         $inventory = Software::where("enable", 1)->with('user');
+
+        $inventory->when(isset($request->name), function($q) use($request){
+            $q->where('name', 'like', '%'.$request->name.'%');
+        })->when(isset($request->status), function($q) use($request){
+            $q->where('status', $request->status);
+        })->when(isset($request->version), function($q) use($request){
+            $q->where('version', $request->version);
+        })->when(isset($request->assigned_to), function($q) use($request){
+            $q->where('assigned_to', $request->assigned_to);
+        })->when(isset($request->expiry_date), function($q) use($request){
+            $q->whereDate('expiry_date', '>='. $request->expiry_date);
+        });
+        
         if($request->has('id')){
             $inventory->where("assigned_to", $request->id);
         }
+
         $inventory = $inventory->get();
         $names = $this->collection2Array(Software::select('name')->where("enable", 1)->groupBy('name')->get(), "name");
-        // $brand = $this->collection2Array(Software::select('brand')->where("enable", 1)->groupBy('brand')->where("type", $type)->get(), "brand");
-        // $floor = $this->collection2Array(Software::select('floor')->where("enable", 1)->groupBy('floor')->where("type", $type)->get(), "floor");
-        // $section = $this->collection2Array(Software::select('section')->where("enable", 1)->groupBy('section')->where("type", $type)->get(), "section");
-        // $location = $this->collection2Array(Software::select('location')->where("enable", 1)->groupBy('location')->where("type", $type)->get(), "location");
         $users = User::select('id','name','email')->where("enable", 1)->get();
         //dd();
         return $this->jsonResponse(['inventory'=>$inventory, 
                                     'names' => $names, 
-                                    // 'brands'=>$brand, 
-                                    // 'floor' => $floor,
-                                    // 'locations' => $location,
-                                    // 'section'=>$section,
                                     'users'=>$users,
                                     'exportUrl' => route('exportSoftware'),
                                     'sampleImport' => route('exportSoftwareSample')
@@ -52,7 +58,7 @@ class SoftwareController extends Controller
         $assigned_on = '';
 
         if($request->assigned_to != ""){
-            $status = "In Use";
+            $status = "Not Available";
         }
         
         if($request->operation == "update"){

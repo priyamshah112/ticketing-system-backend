@@ -406,7 +406,7 @@ class UserController extends Controller
                 if($inventory){
                     if($inventory->assigned_to == ""){
                         $inventory->assigned_to = $request->user_id;
-                        $inventory->status = 'In Use';
+                        $inventory->status = 'Not Available';
                         $inventory->assigned_on = Carbon::now()->format('m/d/Y');
                         $inventory->save();
                         $this->createTrail($user->id, 'User', 6, "New Hardware Inventory(".$id.") Assigned to ".$user->name);
@@ -422,7 +422,7 @@ class UserController extends Controller
                 if($inventory){
                     if($inventory->assigned_to == ""){
                         $inventory->assigned_to = $request->user_id;
-                        $inventory->status = 'In Use';
+                        $inventory->status = 'Not Available';
                         $inventory->assigned_on = Carbon::now()->format('m/dd/Y');
                         $inventory->save();
                         $this->createTrail($user->id, 'User', 6, "New Sofware Inventory(".$id.") Assigned to ".$user->name);
@@ -486,7 +486,7 @@ class UserController extends Controller
     }
 
     public function getlist(Request $request){
-        $user = User::where('userType', 'User')->whereIn("enable", [0,1])->get();
+        $user = User::with('userDetails')->where('userType', 'User')->whereIn("enable", [0,1])->get();
         
         return $this->jsonResponse([
             'user' => $user,

@@ -19,7 +19,7 @@ class CreateTableSoftwareInventory extends Migration
             $table->string("version")->nullable();
             $table->string("key")->nullable();
             $table->integer("assigned_to")->nullable();
-            $table->string("assigned_on")->nullable();
+            $table->date("assigned_on")->nullable();
             $table->string("expiry_date")->nullable();
             $table->string("status")->nullable();
             $table->text("notes")->nullable();

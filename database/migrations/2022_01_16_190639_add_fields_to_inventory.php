@@ -16,10 +16,10 @@ class AddFieldsToInventory extends Migration
         Schema::table('inventory', function (Blueprint $table) {
             $table->double('unit_price')->after('device_name')->nullable();
             $table->text('description')->after('unit_price')->nullable();
-            $table->string('assigned_on')->after('assigned_to')->nullable();
+            $table->date('assigned_on')->after('assigned_to')->nullable();
             $table->string('service_tag')->after('assigned_on')->nullable();
             $table->string('express_service_code')->after('service_tag')->nullable();
-            $table->string('warranty_expire_on')->after('express_service_code')->nullable();
+            $table->date('warranty_expire_on')->after('express_service_code')->nullable();
             
         });
     }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CustomerDetails;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 class UserSeeder extends Seeder
@@ -13,7 +14,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::updateOrCreate([
+        $admin_user = User::updateOrCreate([
             'email' => 'admin@ticketsystem.com'
         ],[
             'name' => 'Admin',
@@ -23,7 +24,15 @@ class UserSeeder extends Seeder
             'role_id' => 1,            
         ]);
 
-        User::updateOrCreate([
+        CustomerDetails::updateOrCreate([
+            'user_id' => $admin_user->id
+        ],[
+            'firstName' => 'Admin',
+            'middleName' => '',
+            'lastName' => 'System'      
+        ]);
+
+        $support_user = User::updateOrCreate([
             'email' => 'support@ticketsystem.com'
         ],[
             'name' => 'Support',
@@ -33,7 +42,15 @@ class UserSeeder extends Seeder
             'role_id' => 2,            
         ]);
 
-        User::updateOrCreate([
+        CustomerDetails::updateOrCreate([
+            'user_id' => $support_user->id
+        ],[
+            'firstName' => 'Support',
+            'middleName' => '',
+            'lastName' => 'System'      
+        ]);
+
+        $support_two_user = User::updateOrCreate([
             'email' => 'support-two@ticketsystem.com'
         ],[
             'name' => 'Support Two',
@@ -43,7 +60,15 @@ class UserSeeder extends Seeder
             'role_id' => 2,            
         ]);
 
-        User::updateOrCreate([
+        CustomerDetails::updateOrCreate([
+            'user_id' => $support_two_user->id
+        ],[
+            'firstName' => 'Support Two',
+            'middleName' => '',
+            'lastName' => 'System'      
+        ]);
+
+        $user = User::updateOrCreate([
             'email' => 'user@ticketsystem.com'
         ],[
             'name' => 'User',
@@ -53,7 +78,15 @@ class UserSeeder extends Seeder
             'role_id' => 3,            
         ]);
 
-        User::updateOrCreate([
+        CustomerDetails::updateOrCreate([
+            'user_id' => $user->id
+        ],[
+            'firstName' => 'User',
+            'middleName' => '',
+            'lastName' => 'System'      
+        ]);
+
+        $user_two = User::updateOrCreate([
             'email' => 'staff@ticketsystem.com'
         ],[
             'name' => 'Staff',
@@ -61,6 +94,14 @@ class UserSeeder extends Seeder
             'password' => bcrypt('tspassword'),
             'userType' => 'Staff',
             'role_id' => 4,            
+        ]);
+
+        CustomerDetails::updateOrCreate([
+            'user_id' => $user_two->id
+        ],[
+            'firstName' => 'Support',
+            'middleName' => '',
+            'lastName' => 'System'      
         ]);
 
     }
