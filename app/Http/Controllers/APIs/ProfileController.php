@@ -66,7 +66,6 @@ class ProfileController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Profile Updated']);
         } catch (\Exception $ex) {
-            dd($ex);
             $this->exceptionHandle($ex, 'updateProfile');
             return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
         }
