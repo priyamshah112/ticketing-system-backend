@@ -31,6 +31,7 @@ class CustomerDetails extends Model
         "request",
         "providingLaptop",
         "hiredAs",
-        "enable"
+        "enable",
+        "image_name"
     ];
 }

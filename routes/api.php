@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\APIs\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 /*
@@ -70,6 +71,8 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post("/faq/add",[App\Http\Controllers\APIs\FAQsController::class, 'add']);
     Route::post("/faq/delete",[App\Http\Controllers\APIs\FAQsController::class, 'distroy']);
 
+    Route::post('view-profile', [ProfileController::class, 'viewProfile']);
+    Route::post('update-profile', [ProfileController::class, 'updateProfile']);
 
 });
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
