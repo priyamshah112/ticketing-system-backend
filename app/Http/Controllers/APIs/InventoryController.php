@@ -30,13 +30,14 @@ class InventoryController extends Controller
         })->when(isset($request->assigned_to), function($q) use($request){
             $q->where('assigned_to', $request->assigned_to);
         })->when(isset($request->warranty_expire_on), function($q) use($request){
-            $q->whereDate('warranty_expire_on', '>='. $request->warranty_expire_on);
+            $q->whereDate('warranty_expire_on', '>=', $request->warranty_expire_on);
         });
 
         if($request->has('id')){
             $inventory->where("assigned_to", $request->id);
         }
         $inventory = $inventory->get();
+        
         $devices = $this->collection2Array(Inventory::select('device_name')->where("enable", 1)->groupBy('device_name')->where("type", $type)->get(), "device_name");
         $brand = $this->collection2Array(Inventory::select('brand')->where("enable", 1)->groupBy('brand')->where("type", $type)->get(), "brand");
         $floor = $this->collection2Array(Inventory::select('floor')->where("enable", 1)->groupBy('floor')->where("type", $type)->get(), "floor");

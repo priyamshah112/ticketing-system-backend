@@ -25,7 +25,7 @@ class SoftwareController extends Controller
         })->when(isset($request->assigned_to), function($q) use($request){
             $q->where('assigned_to', $request->assigned_to);
         })->when(isset($request->expiry_date), function($q) use($request){
-            $q->whereDate('expiry_date', '>='. $request->expiry_date);
+            $q->whereDate('expiry_date', '>=', $request->expiry_date);
         });
         
         if($request->has('id')){

@@ -29,43 +29,46 @@ class UserSeeder extends Seeder
         ],[
             'firstName' => 'Admin',
             'middleName' => '',
-            'lastName' => 'System'      
+            'lastName' => 'System',
+            'clientLocation' => 'USA'    
         ]);
 
-        $support_user = User::updateOrCreate([
-            'email' => 'support@ticketsystem.com'
+        $co_admin_user = User::updateOrCreate([
+            'email' => 'coadmin@ticketsystem.com'
         ],[
-            'name' => 'Support',
-            'email' => 'support@ticketsystem.com',
+            'name' => 'Co Admin',
+            'email' => 'coadmin@ticketsystem.com',
             'password' => bcrypt('tspassword'),
             'userType' => 'Support',
             'role_id' => 2,            
         ]);
 
         CustomerDetails::updateOrCreate([
-            'user_id' => $support_user->id
+            'user_id' => $co_admin_user->id
         ],[
-            'firstName' => 'Support',
+            'firstName' => 'Co Admin',
             'middleName' => '',
-            'lastName' => 'System'      
+            'lastName' => 'System',
+            'clientLocation' => 'USA'       
         ]);
 
-        $support_two_user = User::updateOrCreate([
-            'email' => 'support-two@ticketsystem.com'
+        $co_admin_two_user = User::updateOrCreate([
+            'email' => 'coadmintwo@ticketsystem.com'
         ],[
-            'name' => 'Support Two',
-            'email' => 'support-two@ticketsystem.com',
+            'name' => 'Co Admin',
+            'email' => 'coadmintwo@ticketsystem.com',
             'password' => bcrypt('tspassword'),
             'userType' => 'Support',
             'role_id' => 2,            
         ]);
 
         CustomerDetails::updateOrCreate([
-            'user_id' => $support_two_user->id
+            'user_id' => $co_admin_two_user->id
         ],[
-            'firstName' => 'Support Two',
+            'firstName' => 'Co Admin',
             'middleName' => '',
-            'lastName' => 'System'      
+            'lastName' => 'Two',
+            'clientLocation' => 'USA'       
         ]);
 
         $user = User::updateOrCreate([
@@ -83,7 +86,8 @@ class UserSeeder extends Seeder
         ],[
             'firstName' => 'User',
             'middleName' => '',
-            'lastName' => 'System'      
+            'lastName' => 'System',
+            'clientLocation' => 'USA'        
         ]);
 
         $user_two = User::updateOrCreate([
@@ -101,7 +105,8 @@ class UserSeeder extends Seeder
         ],[
             'firstName' => 'Support',
             'middleName' => '',
-            'lastName' => 'System'      
+            'lastName' => 'System',
+            'clientLocation' => 'USA'       
         ]);
 
     }
