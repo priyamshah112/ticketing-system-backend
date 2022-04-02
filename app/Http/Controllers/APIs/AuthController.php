@@ -74,7 +74,7 @@ class AuthController extends BaseController
             $user = User::where("email", $request->email)->first();//
             //dd($user);
             // if($request->has('userType') && $request->userType == "user"){
-            //     $CustomerDetails = FeederHelper::add($request, "CustomerDetails", "CustomerDetails", ['user_id' => $user->id], 2);
+            //     $CustomerDetails = FeederHelper::add($request->all(), "CustomerDetails", "CustomerDetails", ['user_id' => $user->id], 2);
             // }
             
             if($user){

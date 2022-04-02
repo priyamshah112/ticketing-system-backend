@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Apis;
+
+use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Software;
@@ -39,7 +41,6 @@ class SoftwareController extends Controller
         return $this->jsonResponse(['inventory'=>$inventory, 
                                     'names' => $names, 
                                     'users'=>$users,
-                                    'exportUrl' => route('exportSoftware'),
                                     'sampleImport' => route('exportSoftwareSample')
                                 ], 1);
     }
@@ -51,36 +52,36 @@ class SoftwareController extends Controller
         }
         return $data;
     }
+
     public function add(Request $request){
         //status, type, enable 
+        $data = $request->all();
 
-        $status = 'Available';
-        $assigned_on = '';
+        $data['status'] = 'Available';
 
         if($request->assigned_to != ""){
-            $status = "Not Available";
+            $data['status'] = "Not Available";
         }
         
         if($request->operation == "update"){
             $inventory = Software::find($request->id);
             if($inventory){
                 if($request->assigned_to == $inventory->assigned_to){
-                    $assigned_on = $inventory->assigned_on;
+                    $data['assigned_on'] = $inventory->assigned_on;
                 }
                 if($request->assigned_to != "" && $inventory->assigned_to == ""){
-                    $assigned_on = Carbon::now()->toDateString();
+                    $data['assigned_on'] = Carbon::now()->toDateString();
                 }
             }
         }
         else{
-            $assigned_on = Carbon::now()->toDateString();
+            $data['assigned_on'] = Carbon::now()->toDateString();
         }
-        $expiry = "";
         if($request->expiry_date != ""){
-            $expiry =  Carbon::now()->toDateString();
+            $data['expiry_date'] =  Carbon::createFromFormat('d/m/Y', $request->expiry_date)->format("Y-m-d");
         }
-        
-        $inventory = FeederHelper::add($request, "Software", "Software", ['assigned_on'=>$assigned_on, 'status' => $status, "expiry_date"=>$expiry], 2);
+
+        $inventory = FeederHelper::add($data, "Software", "Software", [],2);
        // dd($inventory);
         if($inventory){
             if($request->operation == "add"){
@@ -116,4 +117,42 @@ class SoftwareController extends Controller
         return $this->jsonResponse([], 1,"Software Imported Successfully!");
 
     } 
+
+    public function export(Request $request){
+
+        $inventory = Software::with('user')->where('enable', 1)
+        ->when(isset($request->name), function($q) use($request){
+            $q->where('name', 'like', '%'.$request->name.'%');
+        })->when(isset($request->status), function($q) use($request){
+            $q->where('status', $request->status);
+        })->when(isset($request->version), function($q) use($request){
+            $q->where('version', $request->version);
+        })->when(isset($request->assigned_to), function($q) use($request){
+            $q->where('assigned_to', $request->assigned_to);
+        })->when(isset($request->expiry_date), function($q) use($request){
+            $q->whereDate('expiry_date', '>=', $request->expiry_date);
+        })->get();
+
+        $lines = [];
+        $selectedPeriod = [];
+        $inventory->transform(function($i){
+            if($i->user)
+                $i->assigned_to = $i->user->name;
+            else
+                $i->assigned_to = '';
+            //unset($i->id);
+            unset($i->created_at);
+            unset($i->updated_at);
+            unset($i->enable);
+            unset($i->type);
+            unset($i->user);
+            return $i;
+
+        });
+        $headings = $this->generateColumnHeading($inventory->first()->toArray());
+        //dd($headings);
+        //dd($tickets);
+        $headings[0] = 'Software ID';
+        return Excel::download(new ReportExport($inventory, $lines, $selectedPeriod, $headings, 'Software Inventory Listing'), 'Software Inventory Listing-'.Carbon::now()->format('m-d-y H:i').'.xlsx');
+    }
 }

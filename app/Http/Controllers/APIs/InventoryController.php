@@ -72,7 +72,7 @@ class InventoryController extends Controller
             if($request->assigned_to != "")
                 $status = "Not Available";
         
-        $inventory = FeederHelper::add($request, "Inventory", "Inventory", ['type'=>$type, 'status' => $status], 2);
+        $inventory = FeederHelper::add($request->all(), "Inventory", "Inventory", ['type'=>$type, 'status' => $status], 2);
         if($inventory){
             if($request->operation == "add"){
                 $this->createTrail($inventory->id, 'Hardware Invenotry', 1);

@@ -375,7 +375,7 @@ class UserController extends Controller
                 //$user->country = $data['country'];
                 $user->role_id = $data['role_id'];
                 $user->save();
-                $userDetails = FeederHelper::add($request, "CustomerDetails", "CustomerDetails", [], 2);
+                $userDetails = FeederHelper::add($request->all(), "CustomerDetails", "CustomerDetails", [], 2);
                 $this->createTrail($user->id, 'User', 2);
 
                 return $this->jsonResponse([], 1, "User updated successfully!"); 

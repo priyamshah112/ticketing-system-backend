@@ -25,7 +25,7 @@ class FAQsController extends Controller
     }
 
     public function add(Request $request){
-        $inventory = FeederHelper::add($request, "FAQs", "FAQs", [], 2);
+        $inventory = FeederHelper::add($request->all(), "FAQs", "FAQs", [], 2);
         if($inventory){
             if($request->operation == "add")
                 return $this->jsonResponse([], 1,"FAQ Added Successfully!");

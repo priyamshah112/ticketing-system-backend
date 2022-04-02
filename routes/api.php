@@ -21,6 +21,9 @@ Route::group(['prefix' => 'v1'], function(){
     Route::post("/reset",[App\Http\Controllers\APIs\AuthController::class, 'reset']);
     Route::post('/forgot-password', [App\Http\Controllers\APIs\AuthController::class, 'forgot_password']);
 
+    // Exports
+    Route::get("/software/export", [App\Http\Controllers\APIs\SoftwareController::class, 'export']);
+
     
 });
 

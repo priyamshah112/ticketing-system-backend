@@ -164,4 +164,31 @@ class Controller extends BaseController
             'operation' => $operation
         ]);
     }
+
+    function generateColumnHeading($data){
+        $headingKeys = array_keys((array)$data);
+        
+        $nHeading = ['note' => 'Note',
+                    'customID' => 'Inventory ID','device_name'=> 'Device Name', 'device_number'=>'Device Number',
+                    'brand'=>'Brand', 'model' => 'Model', 'serial_number' => 'Serial Number',
+                    "floor"=> 'Floor',	'section'=> 'Section', 'assigned_to' => 'Assigned To',
+                    'status'=>'Status',	'location'=> 'Location', 	'notes'=> 'Notes',
+                    'id' => 'ID', 'name' => 'Name', 'email', 'Email ID', 'userType' => 'User Role', 'hireDate' => 'Hire Date', 'startDate' => 'Start Date',
+                    'firstName' => 'First Name', 'middleName' => 'Middle Name', 'lastName' => 'Last Name', 'preferredName' => 'Preferred Name',
+                    'homePhone' => 'Home Phone', 'cellPhone'=>'Cell Phone', 'title' => 'Title', 'projectName' => 'Project Name', 'clientName' => 'Client Name',
+                    'clientLocation' => 'Client Location', 'workLocation' => 'Work Location', 'supervisorName'=> 'Supervisor Name', 'request' => 'Request',
+                    'providingLaptop' => 'Providing Laptop', 'hiredAs' => 'Hired As', 'permanantAddress' => 'Permanant Address', 'assigned_on' => 'Assigned On',
+                    'expiry_date' => 'Expiry Date', 'key' => 'Key', 'version' => 'Version', 'enable1' => 'Status',
+                    'email' => 'Email ID'
+            ];
+        $heading = array();
+        foreach ($headingKeys as $key => $value) {
+            if (isset($nHeading[$value]))
+                array_push($heading, $nHeading[$value]);
+            else
+                array_push($heading, $value);
+        }
+        //dd($heading);
+        return $heading;
+    }
 }

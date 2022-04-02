@@ -56,7 +56,19 @@ class ExportController extends Controller
     }
 
     public function exportSoftware(Request $request){
-        $inventory = Software::with('user')->where('enable', 1)->get();
+        $inventory = Software::with('user')->where('enable', 1)
+        ->when(isset($request->name), function($q) use($request){
+            $q->where('name', 'like', '%'.$request->name.'%');
+        })->when(isset($request->status), function($q) use($request){
+            $q->where('status', $request->status);
+        })->when(isset($request->version), function($q) use($request){
+            $q->where('version', $request->version);
+        })->when(isset($request->assigned_to), function($q) use($request){
+            $q->where('assigned_to', $request->assigned_to);
+        })->when(isset($request->expiry_date), function($q) use($request){
+            $q->whereDate('expiry_date', '>=', $request->expiry_date);
+        })->get();
+
         $lines = [];
         $selectedPeriod = [];
         $inventory->transform(function($i){

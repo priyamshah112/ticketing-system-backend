@@ -10,11 +10,11 @@ use App\Models\Config;
 
 class FeederHelper{
 
-    public static function add($request, $model, $modelName, $extraValue = [], $Responsetype = 1){
+    public static function add($data, $model, $modelName, $extraValue = [], $Responsetype = 1){
         $model = 'App\\Models\\' .  $model;
-        if($request['operation'] == "add"){            
+        if($data['operation'] == "add"){            
             
-            $data = $model::create($request->all());
+            $data = $model::create($data);
 
             foreach (array_keys($extraValue) as $key => $value) {
                 $data->$value = $extraValue[$value];                
@@ -27,14 +27,14 @@ class FeederHelper{
             if($Responsetype == 2)
                 return $data;
         }
-        else if($request['operation'] == "update"){
-            $id = $request['id'];  
+        else if($data['operation'] == "update"){
+            $id = $data['id'];  
             $data = $model::find($id); 
             
             if($data) {
                 foreach (array_keys($data->toArray()) as $key => $value) {
-                    if($request->has($value)){
-                        $data->$value = $request[$value];                
+                    if($data->has($value)){
+                        $data->$value = $data[$value];                
                     }
                 }                
                 

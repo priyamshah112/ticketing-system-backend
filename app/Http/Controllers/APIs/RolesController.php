@@ -18,7 +18,7 @@ class RolesController extends Controller
     }
 
     public function add(Request $request){
-        $role = FeederHelper::add($request, "Role", "Role", [], 2);
+        $role = FeederHelper::add($request->all(), "Role", "Role", [], 2);
         
         if($role){
             $access = RoleAccess::where("role_id", $role->id )->delete();

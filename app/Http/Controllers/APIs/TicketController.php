@@ -131,7 +131,7 @@ class TicketController extends Controller
         $images = $this->uploadImages($request,$request->ticket_id);
         //dd($images);
         if($ticket){
-            $TicketActivity = FeederHelper::add($request, "TicketActivity", "TicketActivity", ['status'=>$ticket->status, 'activity_by' => Auth::user()->id, 'images'=> $images], 2);
+            $TicketActivity = FeederHelper::add($request->all(), "TicketActivity", "TicketActivity", ['status'=>$ticket->status, 'activity_by' => Auth::user()->id, 'images'=> $images], 2);
             if($TicketActivity){
                 if(Auth::user()->id == $ticket->created_by){
                     $this->sendTicketUpdate("customerReply", $request->ticket_id);
