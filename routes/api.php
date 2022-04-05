@@ -21,12 +21,18 @@ Route::group(['prefix' => 'v1'], function(){
     Route::post("/reset",[App\Http\Controllers\APIs\AuthController::class, 'reset']);
     Route::post('/forgot-password', [App\Http\Controllers\APIs\AuthController::class, 'forgot_password']);
 
-    
+
 });
 
-Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){ 
+Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     //Roles
     Route::post('/change-password', [App\Http\Controllers\APIs\UserController::class, 'changePassword']);
+
+    Route::get('/request-by-user', [App\Http\Controllers\APIs\HomeController::class, 'requestByUser']);
+    Route::get('/hardware-inventory', [App\Http\Controllers\APIs\HomeController::class, 'hardwareInventory']);
+    Route::get('/track-by-contry', [App\Http\Controllers\APIs\HomeController::class, 'trackByContry']);
+    Route::get('/ticket-request', [App\Http\Controllers\APIs\HomeController::class, 'ticketRequest']);
+    Route::get('/ticket-priority-level', [App\Http\Controllers\APIs\HomeController::class, 'ticketPriorityLevel']);
 
     Route::get("/dashboard",[App\Http\Controllers\APIs\UserController::class, 'dashboard']);
     Route::get("/userdashboard",[App\Http\Controllers\APIs\UserController::class, 'userDashboard']);
@@ -45,7 +51,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post("/user/create/submit",[App\Http\Controllers\APIs\UserController::class, 'createUserDetails']);
     Route::post("/user/import",[App\Http\Controllers\APIs\UserController::class, 'import']);
     Route::get("/user/getlist",[App\Http\Controllers\APIs\UserController::class, 'getlist']);
-    
+
     //Tickets
     Route::get("/tickets",[App\Http\Controllers\APIs\TicketController::class, 'index']);
     Route::post("/ticket/add",[App\Http\Controllers\APIs\TicketController::class, 'add']);
@@ -75,6 +81,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post('update-profile', [ProfileController::class, 'updateProfile']);
 
 });
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
