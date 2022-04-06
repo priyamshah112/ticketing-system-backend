@@ -9,6 +9,7 @@ use App\Models\ErrorLog;
 use App\Models\Inventory;
 use App\Models\Ticket;
 use App\Traits\ExceptionLog;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -57,7 +58,21 @@ class HomeController extends Controller
     }
 
     public function ticketRequest() {
-        return response()->json(['success'=>true]);
+        try {
+        $dailycount = Ticket::whereDate('created_at', Carbon::today())->get();
+        $weeklycount = Ticket::whereDate('created_at', Carbon::now()->subDays(7))->get();
+        $monthlycount = Ticket::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
+        return response()->json([
+                'success' => true,
+                'daily' => $dailycount,
+                'weekly' => $weeklycount,
+                'monthly' => $monthlycount,
+                // 'high' => PriorityUserResource::collection($HighTicketList),
+            ]);
+        } catch (\Exception $exception) {
+            $this->exceptionHandle($exception, __METHOD__);
+            return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
+        }
     }
 
     public function ticketPriorityLevel() {
