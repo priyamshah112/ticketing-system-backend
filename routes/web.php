@@ -1,7 +1,9 @@
 <?php
 
+use Faker\Factory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,4 +44,45 @@ Route::get('/artisan/migrate', function () {
     Artisan::call('db:seed');
 });
 
+Route::get('/auth/redirect', function () {
 
+//     $abstractUser = Mockery::mock('Laravel\Socialite\Two\User');
+//     $abstractUser->shouldReceive('getId')
+//    ->andReturn(rand())
+//    ->shouldReceive('getName')
+//    ->andReturn('utioghreduik')
+//    ->shouldReceive('getEmail')
+//    ->andReturn('zeemzach@gmail.com')
+//    ->shouldReceive('getAvatar')
+//    ->andReturn('https://en.gravatar.com/userimage');
+
+//    $provider = Mockery::mock('Laravel\Socialite\Contracts\Provider');
+//     $provider->shouldReceive('user')->andReturn($abstractUser);
+
+//     Socialite::shouldReceive('driver->user')->andReturn($provider);
+
+    // After Oauth redirect back to the route
+    // $this->visit('/auth/callback')
+    // See the page that the user login into
+    // ->seePageIs('/');
+    return Socialite::driver('github')->redirect();
+});
+ 
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('github')->user();
+    // OAuth 2.0 providers...
+    // $token = $user->token;
+    // $refreshToken = $user->refreshToken;
+    // $expiresIn = $user->expiresIn;
+
+    // // OAuth 1.0 providers...
+    // $token = $user->token;
+    // $tokenSecret = $user->tokenSecret;
+
+    // All providers...
+    // $user->getId();
+    // $user->getName();
+    // $user->getEmail();
+    // $user->getAvatar();
+    return $user->getName();
+});

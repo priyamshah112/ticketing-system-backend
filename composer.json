@@ -11,8 +11,10 @@
         "laravel/framework": "^8.75",
         "laravel/passport": "^10.2",
         "laravel/sanctum": "^2.11",
+        "laravel/socialite": "^5.5",
         "laravel/tinker": "^2.5",
         "maatwebsite/excel": "^3.1",
+        "socialiteproviders/microsoft-azure": "^5.1",
         "stevebauman/location": "^6.2"
     },
     "require-dev": {
