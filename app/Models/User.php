@@ -82,7 +82,4 @@ class User extends Authenticatable
     public function userDetails(){
         return $this->hasOne('App\Models\CustomerDetails', 'user_id', 'id');
     }
-
-    
-
 }

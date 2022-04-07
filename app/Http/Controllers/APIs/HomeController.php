@@ -5,6 +5,7 @@ namespace App\Http\Controllers\APIs;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PriorityUserResource;
 use App\Http\Resources\RequestUserResource;
+use App\Models\Country;
 use App\Models\ErrorLog;
 use App\Models\Inventory;
 use App\Models\Ticket;
@@ -48,9 +49,17 @@ class HomeController extends Controller
 
     public function trackByContry() {
         try {
-            $trackCountry = Ticket::where('status','open')->count();
-
-            return response()->json(['success' => true, 'totalticket' => $trackCountry]);
+            $trackCountry = Country::get();
+            foreach ($trackCountry as $value) {
+                foreach ($value->ticket as $v) {
+                   $count = [
+                    'country_name' => $value->country_name,
+                    'country_code' => $value->country_code,
+                    'totaltikit' =>  $v->count(),
+                   ];
+                }
+            }
+            return response()->json(['success' => true, 'totalticket' => $count]);
         } catch (\Exception $exception) {
             $this->exceptionHandle($exception, __METHOD__);
             return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
