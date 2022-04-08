@@ -59,7 +59,7 @@ class HomeController extends Controller
                    ];
                 }
             }
-            return response()->json(['success' => true, 'totalticket' => $count]);
+            return response()->json(['success' => true, 'totalticket' => $trackCountry]);
         } catch (\Exception $exception) {
             $this->exceptionHandle($exception, __METHOD__);
             return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
@@ -68,14 +68,29 @@ class HomeController extends Controller
 
     public function ticketRequest() {
         try {
-        $dailycount = Ticket::whereDate('created_at', Carbon::today())->get();
-        $weeklycount = Ticket::whereDate('created_at', Carbon::now()->subDays(7))->get();
-        $monthlycount = Ticket::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
+        $dailycount = Ticket::get();
+        // $weeklycount = Ticket::whereDate('created_at', Carbon::now()->subDays(1))->get();
+        // $monthlycount = Ticket::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
+
+        $dateS = Carbon::now()->startOfMonth()->subMonth(1);
+        $dateE = Carbon::now()->startOfMonth();
+
+        foreach ($dailycount as $d) {
+            $daily = [
+                'DailyCount' => $d->whereDate('created_at', Carbon::today())->count(),
+            ];
+            $weekly = [
+                'weeklyCount' => $d->whereDate('created_at', Carbon::now()->subDays(6))->count(),
+            ];
+            $monthly = [
+                'monthlyCount' => $d->whereBetween('created_at',[$dateS,$dateE])->count(),
+            ];
+        }
         return response()->json([
                 'success' => true,
-                'daily' => $dailycount,
-                'weekly' => $weeklycount,
-                'monthly' => $monthlycount,
+                'daily' => $daily,
+                'weekly' => $weekly,
+                'monthly' => $monthly,
                 // 'high' => PriorityUserResource::collection($HighTicketList),
             ]);
         } catch (\Exception $exception) {
