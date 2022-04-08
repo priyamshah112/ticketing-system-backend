@@ -11,6 +11,7 @@ use App\Models\Inventory;
 use App\Models\Ticket;
 use App\Traits\ExceptionLog;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -48,18 +49,16 @@ class HomeController extends Controller
     }
 
     public function trackByContry() {
+
+        $countCountry = array();
         try {
             $trackCountry = Country::get();
             foreach ($trackCountry as $value) {
-                foreach ($value->ticket as $v) {
-                   $count = [
-                    'country_name' => $value->country_name,
-                    'country_code' => $value->country_code,
-                    'totaltikit' =>  $v->count(),
-                   ];
-                }
+                   $countryData['country_name'] = $value->country_name;
+                   $countryData['count'] = $value->ticket->count();
+                   array_push($countCountry,$countryData);
             }
-            return response()->json(['success' => true, 'totalticket' => $trackCountry]);
+            return response()->json(['success' => true, 'totalticket' => $countCountry]);
         } catch (\Exception $exception) {
             $this->exceptionHandle($exception, __METHOD__);
             return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
@@ -68,22 +67,30 @@ class HomeController extends Controller
 
     public function ticketRequest() {
         try {
-        $dailycount = Ticket::get();
+
+            $fromDate = Carbon::now()->subDay()->startOfWeek()->toDateString(); // or ->format(..)
+            $tillDate = Carbon::now()->subDay()->toDateString();
+
+            $dateS = Carbon::now()->startOfMonth()->subMonth(1);
+            $dateE = Carbon::now()->startOfMonth();
+
+            $weeklyCount = Ticket::selectRaw('DATE(created_at) as Date')->selectRaw('DATE_FORMAT(created_at,"%W") as days, COUNT(*) as count')->whereBetween( DB::raw('date(created_at)'), [$fromDate, $tillDate])->orderBy('days')->get();
+
+            $monthlyCount = Ticket::selectRaw('DATE(created_at) as Date, COUNT(*) as count')->whereBetween('created_at',[$dateS,$dateE])->get();
+
+            $dailycount = Ticket::get();
         // $weeklycount = Ticket::whereDate('created_at', Carbon::now()->subDays(1))->get();
         // $monthlycount = Ticket::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
-
-        $dateS = Carbon::now()->startOfMonth()->subMonth(1);
-        $dateE = Carbon::now()->startOfMonth();
 
         foreach ($dailycount as $d) {
             $daily = [
                 'DailyCount' => $d->whereDate('created_at', Carbon::today())->count(),
             ];
             $weekly = [
-                'weeklyCount' => $d->whereDate('created_at', Carbon::now()->subDays(6))->count(),
+                'weeklyCount' => $weeklyCount,
             ];
             $monthly = [
-                'monthlyCount' => $d->whereBetween('created_at',[$dateS,$dateE])->count(),
+                'monthlyCount' => $monthlyCount,
             ];
         }
         return response()->json([
@@ -91,9 +98,9 @@ class HomeController extends Controller
                 'daily' => $daily,
                 'weekly' => $weekly,
                 'monthly' => $monthly,
-                // 'high' => PriorityUserResource::collection($HighTicketList),
             ]);
         } catch (\Exception $exception) {
+            dd($exception);
             $this->exceptionHandle($exception, __METHOD__);
             return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
         }
