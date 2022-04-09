@@ -64,6 +64,16 @@ class HomeController extends Controller
             return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
         }
     }
+    
+    public function countries() {
+        try {
+            $countries = Country::select('id','country_code','country_name')->get();
+            return response()->json(['success' => true, 'countries' => $countries]);
+        } catch (\Exception $exception) {
+            $this->exceptionHandle($exception, __METHOD__);
+            return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
+        }
+    }
 
     public function ticketRequest() {
         try {

@@ -24,6 +24,7 @@ Route::group(['prefix' => 'v1'], function(){
     // Exports
     Route::get("/software/export", [App\Http\Controllers\APIs\SoftwareController::class, 'export']);
 
+    Route::get('/countries', [App\Http\Controllers\APIs\HomeController::class, 'countries']);
     
 
 });
@@ -37,6 +38,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::get('/track-by-contry', [App\Http\Controllers\APIs\HomeController::class, 'trackByContry']);
     Route::get('/ticket-request', [App\Http\Controllers\APIs\HomeController::class, 'ticketRequest']);
     Route::get('/ticket-priority-level', [App\Http\Controllers\APIs\HomeController::class, 'ticketPriorityLevel']);
+
 
     Route::get("/dashboard",[App\Http\Controllers\APIs\UserController::class, 'dashboard']);
     Route::get("/userdashboard",[App\Http\Controllers\APIs\UserController::class, 'userDashboard']);

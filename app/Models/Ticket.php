@@ -13,6 +13,7 @@ class Ticket extends Model
     protected $fillable = [
         'subject',
         'assiged_to',
+        'priority',
         'product_id',
         'created_by',
         'status',
