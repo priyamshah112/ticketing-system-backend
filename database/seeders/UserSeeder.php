@@ -21,7 +21,8 @@ class UserSeeder extends Seeder
             'email' => 'admin@ticketsystem.com',
             'password' => bcrypt('tspassword'),
             'userType' => 'Admin',
-            'role_id' => 1,            
+            'role_id' => 1,   
+            'country_id' => 1         
         ]);
 
         CustomerDetails::updateOrCreate([
@@ -40,7 +41,8 @@ class UserSeeder extends Seeder
             'email' => 'coadmin@ticketsystem.com',
             'password' => bcrypt('tspassword'),
             'userType' => 'Support',
-            'role_id' => 2,            
+            'role_id' => 2,   
+            'country_id' => 2          
         ]);
 
         CustomerDetails::updateOrCreate([
@@ -59,7 +61,8 @@ class UserSeeder extends Seeder
             'email' => 'coadmintwo@ticketsystem.com',
             'password' => bcrypt('tspassword'),
             'userType' => 'Support',
-            'role_id' => 2,            
+            'role_id' => 2,  
+            'country_id' => 3           
         ]);
 
         CustomerDetails::updateOrCreate([
@@ -74,17 +77,38 @@ class UserSeeder extends Seeder
         $user = User::updateOrCreate([
             'email' => 'user@ticketsystem.com'
         ],[
-            'name' => 'User',
+            'name' => 'User First',
             'email' => 'user@ticketsystem.com',
             'password' => bcrypt('tspassword'),
             'userType' => 'User',
-            'role_id' => 3,            
+            'role_id' => 3,   
+            'country_id' => 1          
         ]);
 
         CustomerDetails::updateOrCreate([
             'user_id' => $user->id
         ],[
-            'firstName' => 'User',
+            'firstName' => 'User First',
+            'middleName' => '',
+            'lastName' => 'System',
+            'clientLocation' => 'USA'        
+        ]);
+
+        $user = User::updateOrCreate([
+            'email' => 'user-two@ticketsystem.com'
+        ],[
+            'name' => 'User Second',
+            'email' => 'user-two@ticketsystem.com',
+            'password' => bcrypt('tspassword'),
+            'userType' => 'User',
+            'role_id' => 3,   
+            'country_id' => 1          
+        ]);
+
+        CustomerDetails::updateOrCreate([
+            'user_id' => $user->id
+        ],[
+            'firstName' => 'User Second',
             'middleName' => '',
             'lastName' => 'System',
             'clientLocation' => 'USA'        
@@ -97,7 +121,8 @@ class UserSeeder extends Seeder
             'email' => 'staff@ticketsystem.com',
             'password' => bcrypt('tspassword'),
             'userType' => 'Staff',
-            'role_id' => 4,            
+            'role_id' => 4,     
+            'country_id' => 2        
         ]);
 
         CustomerDetails::updateOrCreate([

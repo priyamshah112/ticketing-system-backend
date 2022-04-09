@@ -37,8 +37,8 @@ class HomeController extends Controller
     public function hardwareInventory() {
         try {
             $inventory = Inventory::selectRaw('count(*) as totalinventory')
-            ->selectRaw("count(case when status = 'available' then 0 end) as available")
-            ->selectRaw("count(case when status = 'assign' then 0 end) as assign")
+            ->selectRaw("count(case when status = 'Available' then 0 end) as available")
+            ->selectRaw("count(case when status = 'Not Available' then 0 end) as assign")
             ->get();
 
             return response()->json(['success' => true, 'data' => $inventory]);
