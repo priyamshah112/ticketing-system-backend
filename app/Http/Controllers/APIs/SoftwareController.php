@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Apis;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Helpers\FeederHelper;
+use App\Imports\SoftwareImport;
+use App\Models\ErrorLog;
 use App\Models\Software;
 use App\Models\User;
-use App\Http\Helpers\FeederHelper;
 use Carbon\Carbon;
-use App\Imports\SoftwareImport;
 use Excel;
+use Exception;
+use Illuminate\Http\Request;
 
 class SoftwareController extends Controller
 {
@@ -115,5 +117,18 @@ class SoftwareController extends Controller
          Excel::import($import, $path);
         return $this->jsonResponse([], 1,"Software Imported Successfully!");
 
+    }
+
+    public function deleteInventory(Request $request)
+    {
+        try {
+            $inventoryId = $request->inventory_id;
+            Software::where('id', $inventoryId)->delete();
+
+            return response()->json(['success' => true, 'message' => 'Inventory deleted']);
+        } catch (\Exception $ex) {
+            $this->exceptionHandle($ex, 'deleteInventory');
+            return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
+        }
     } 
 }

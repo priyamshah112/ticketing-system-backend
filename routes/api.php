@@ -72,6 +72,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post("/software/inventory/add",[App\Http\Controllers\APIs\SoftwareController::class, 'add']);
     Route::post("/software/inventory/delete",[App\Http\Controllers\APIs\SoftwareController::class, 'distroy']);
     Route::post("/software/inventory/import",[App\Http\Controllers\APIs\SoftwareController::class, 'import']);
+    Route::post('/delete-inventory', [App\Http\Controllers\APIs\SoftwareController::class, 'deleteInventory']);
 
     Route::get("/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'index']);
     Route::post("/faq/add",[App\Http\Controllers\APIs\FAQsController::class, 'add']);
@@ -79,6 +80,8 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
 
     Route::post('view-profile', [ProfileController::class, 'viewProfile']);
     Route::post('update-profile', [ProfileController::class, 'updateProfile']);
+
+
 
 });
 
