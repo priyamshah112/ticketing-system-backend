@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Mail;
 use App\Models\AuditTrail;
 use Auth;
+use Carbon\Carbon;
 
 class Controller extends BaseController
 {
@@ -190,5 +191,23 @@ class Controller extends BaseController
         }
         //dd($heading);
         return $heading;
+    }
+
+    function dateFilter($list, $compare_to, $value)
+    {
+        if(empty($value))
+        {
+            return [];
+        }
+
+        $tempList = [];
+        foreach ($list as $item) {
+            if(Carbon::parse($item[$compare_to])->gte(Carbon::parse($value)))
+            {
+                array_push($tempList, $item);
+            }
+        }
+
+        return $tempList;
     }
 }

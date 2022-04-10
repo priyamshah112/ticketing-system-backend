@@ -24,13 +24,13 @@ class TicketController extends Controller
 
         switch($user->userType){
             case "Support": 
-                $tickets = $tickets->where("assiged_to", $user->id);
+                $tickets = $tickets->where("assigned_to", $user->id);
                 break;
             case "User":
                 $tickets = $tickets->where("created_by", $user->id);
                 break;
             case "Staff":  
-                $tickets = $tickets->where("created_by", $user->id)->orWhere("assiged_to", $user->id);
+                $tickets = $tickets->where("created_by", $user->id)->orWhere("assigned_to", $user->id);
                 break;
         }
 
@@ -40,9 +40,13 @@ class TicketController extends Controller
             $q->where('subject', 'like', '%'.$request->subject.'%');
         })->when(isset($request->assigned_to), function($q) use($request){
             $q->where('assigned_to', $request->assigned_to);
-        })->when(isset($request->created_at), function($q) use($request){
-            $q->whereDate('created_at', '>='. $request->created_at);
         })->get();
+
+        if(isset($request->created_at))
+        {
+            $tickets = $this->dateFilter($tickets, 'created_at', $request->created_at);
+        }
+        
         $users = User::where("userType", "Support")->where("enable", 1)->get();
         //$users = User::select('id','name','email')->where("enable", 1)->get();
         $userSoftwares = Software::where("enable", 1)->where('assigned_to', $user->id)->get();
@@ -161,13 +165,13 @@ class TicketController extends Controller
         $ticket =  Ticket::find($request->ticket_id);
         
         if($ticket){
-            $ticket->assiged_to = $request->assigned_to;
+            $ticket->assigned_to = $request->assigned_to;
             $ticket->save();
 
             $user = User::find($request->assigned_to);
             //die(json_encode($request->all()));
             if($user){
-                $ticket->assiged_to = $request->assigned_to;
+                $ticket->assigned_to = $request->assigned_to;
                 $ticket->status = 'In Progress';
                 $ticket->save();
                 

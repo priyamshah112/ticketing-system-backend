@@ -26,8 +26,6 @@ class SoftwareController extends Controller
             $q->where('version', $request->version);
         })->when(isset($request->assigned_to), function($q) use($request){
             $q->where('assigned_to', $request->assigned_to);
-        })->when(isset($request->expiry_date), function($q) use($request){
-            $q->whereDate('expiry_date', '>=', $request->expiry_date);
         });
         
         if($request->has('id')){
@@ -35,6 +33,12 @@ class SoftwareController extends Controller
         }
 
         $inventory = $inventory->get();
+
+        if(isset($request->expiry_date))
+        {
+            $inventory = $this->dateFilter($inventory, 'expiry_date', $request->expiry_date);
+        }
+
         $names = $this->collection2Array(Software::select('name')->where("enable", 1)->groupBy('name')->get(), "name");
         $users = User::select('id','name','email')->where("enable", 1)->get();
         //dd();

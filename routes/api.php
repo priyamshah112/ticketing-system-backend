@@ -57,6 +57,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post("/user/create/submit",[App\Http\Controllers\APIs\UserController::class, 'createUserDetails']);
     Route::post("/user/import",[App\Http\Controllers\APIs\UserController::class, 'import']);
     Route::get("/user/getlist",[App\Http\Controllers\APIs\UserController::class, 'getlist']);
+    Route::get("/support-users",[App\Http\Controllers\APIs\UserController::class, 'getSupportUsers']);
 
     //Tickets
     Route::get("/tickets",[App\Http\Controllers\APIs\TicketController::class, 'index']);

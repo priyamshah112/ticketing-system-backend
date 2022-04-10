@@ -12,7 +12,7 @@ class Ticket extends Model
     protected $table = 'tickets';
     protected $fillable = [
         'subject',
-        'assiged_to',
+        'assigned_to',
         'priority',
         'product_id',
         'created_by',
@@ -28,6 +28,6 @@ class Ticket extends Model
         return $this->hasOne('App\Models\User', 'id', 'created_by');
     }
     public function support(){
-        return $this->hasOne('App\Models\User', 'id', 'assiged_to');
+        return $this->hasOne('App\Models\User', 'id', 'assigned_to');
     }
 }

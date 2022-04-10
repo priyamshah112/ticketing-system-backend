@@ -255,10 +255,10 @@ class UserController extends Controller
             case 'Support':
                 $totalHardwares->where("assigned_to", $user_id);
                 $totalSoftware->where("assigned_to", $user_id);
-                $tickets->where("assiged_to", $user_id);
-                $totalTickets->where("assiged_to", $user_id);
-                $totalOpenTickets->where("assiged_to", $user_id);
-                $recentOpenTickets->where("assiged_to", $user_id);
+                $tickets->where("assigned_to", $user_id);
+                $totalTickets->where("assigned_to", $user_id);
+                $totalOpenTickets->where("assigned_to", $user_id);
+                $recentOpenTickets->where("assigned_to", $user_id);
                 break;
 
             case 'User':
@@ -493,6 +493,16 @@ class UserController extends Controller
         ], 1);
 
     }
+    
+    public function getSupportUsers(Request $request){
+        $user = User::with('userDetails')->where('userType', 'Support')->whereIn("enable", [0,1])->get();
+        
+        return $this->jsonResponse([
+            'user' => $user,
+        ], 1);
+
+    }
+
     public function availableInventories(Request $request){
         $user_id = $request->user_id;
 

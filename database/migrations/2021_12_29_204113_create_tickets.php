@@ -17,7 +17,7 @@ class CreateTickets extends Migration
             $table->id();
             $table->string("subject")->nullable();
 
-            $table->integer("assiged_to")->nullable();
+            $table->integer("assigned_to")->nullable();
             $table->integer("created_by")->nullable(); 
             
             $table->string("status")->nullable(); // ['Pending', 'In Progress', 'Closed']

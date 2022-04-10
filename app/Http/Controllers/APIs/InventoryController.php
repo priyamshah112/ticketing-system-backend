@@ -19,8 +19,8 @@ class InventoryController extends Controller
             $q->where('asset_name', 'like', '%'.$request->asset_name.'%');
         })->when(isset($request->model), function($q) use($request){
             $q->where('model', 'like', '%'.$request->model.'%');
-        })->when(isset($request->serial_number), function($q) use($request){
-            $q->where('serial_number', 'like', '%'.$request->serial_number.'%');
+        })->when(isset($request->service_tag), function($q) use($request){
+            $q->where('service_tag', 'like', '%'.$request->service_tag.'%');
         })->when(isset($request->express_service_code), function($q) use($request){
             $q->where('express_service_code', 'like', '%'.$request->express_service_code.'%');
         })->when(isset($request->status), function($q) use($request){
@@ -29,14 +29,18 @@ class InventoryController extends Controller
             $q->where('location', $request->location);
         })->when(isset($request->assigned_to), function($q) use($request){
             $q->where('assigned_to', $request->assigned_to);
-        })->when(isset($request->warranty_expire_on), function($q) use($request){
-            $q->whereDate('warranty_expire_on', '>=', $request->warranty_expire_on);
         });
 
         if($request->has('id')){
             $inventory->where("assigned_to", $request->id);
         }
         $inventory = $inventory->get();
+        
+        
+        if(isset($request->warranty_expire_on))
+        {
+            $inventory = $this->dateFilter($inventory, 'warranty_expire_on', $request->warranty_expire_on);
+        }
         
         $devices = $this->collection2Array(Inventory::select('device_name')->where("enable", 1)->groupBy('device_name')->where("type", $type)->get(), "device_name");
         $brand = $this->collection2Array(Inventory::select('brand')->where("enable", 1)->groupBy('brand')->where("type", $type)->get(), "brand");
