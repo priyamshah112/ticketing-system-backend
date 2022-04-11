@@ -86,7 +86,7 @@ class HomeController extends Controller
 
             $weeklyCount = Ticket::selectRaw('DATE(created_at) as Date')->selectRaw('DATE_FORMAT(created_at,"%W") as days, COUNT(*) as count')->groupBy('Date')->whereBetween( DB::raw('date(created_at)'), [$fromDate, $tillDate])->orderBy('Date')->get();
 
-            $monthlyCount = Ticket::selectRaw('DATE(created_at) as Date, COUNT(*) as count')->whereBetween('created_at',[$dateS,$dateE])->get();
+            $monthlyCount = Ticket::selectRaw('DATE(created_at) as Date, COUNT(*) as count')->groupBy('Date')->whereBetween('created_at',[$dateS,$dateE])->get();
 
             $dailycount = Ticket::get();
         // $weeklycount = Ticket::whereDate('created_at', Carbon::now()->subDays(1))->get();
