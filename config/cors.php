@@ -16,7 +16,7 @@ return [
     */
 
     'paths' => ['api/*', 'api/admin/*', 'api/users/*', '*'],
-    'allowed_methods' => ['POST', 'GET', `DELETE`, 'PUT', '*'],
+    'allowed_methods' => ['POST', 'GET', 'DELETE', 'PUT', '*'],
     'allowed_origins' => ['http://localhost:3000', 'https://client.myapp.com', 'http://142.93.211.147:3000', 'http://142.93.211.147:8080', 'http://142.93.211.147:80', '*'],
     'allowed_headers' => ['Origin', 'Content-Type', 'Authorization', 'Accept', 'X-Custom-Header', 'X-Auth-Token', 'Upgrade-Insecure-Requests', '*'],
     'exposed_headers' => ['*'],

@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Apis;
 
 use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Helpers\FeederHelper;
+use App\Imports\SoftwareImport;
+use App\Models\ErrorLog;
 use App\Models\Software;
 use App\Models\User;
-use App\Http\Helpers\FeederHelper;
 use Carbon\Carbon;
-use App\Imports\SoftwareImport;
 use Excel;
+use Exception;
+use Illuminate\Http\Request;
 
 class SoftwareController extends Controller
 {
@@ -106,9 +108,15 @@ class SoftwareController extends Controller
     }
 
     public function distroy(Request $request){
-        $this->createTrail($request->delete_id, 'Software Invenotry', 3);
+        try {
+            $inventoryId = $request->delete_id;
+            Software::where('id', $inventoryId)->delete();
 
-        return FeederHelper::distroy($request, "Software", "Software", 2 , 0, 2);
+            return response()->json(['success' => true, 'message' => 'Inventory Deleted Succesfully!']);
+        } catch (\Exception $ex) {
+            $this->exceptionHandle($ex, 'deleteInventory');
+            return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
+        }
     }
 
     public function import(Request $request){
@@ -120,7 +128,7 @@ class SoftwareController extends Controller
          Excel::import($import, $path);
         return $this->jsonResponse([], 1,"Software Imported Successfully!");
 
-    } 
+    }
 
     public function export(Request $request){
 

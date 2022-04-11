@@ -87,6 +87,8 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post('view-profile', [ProfileController::class, 'viewProfile']);
     Route::post('update-profile', [ProfileController::class, 'updateProfile']);
 
+
+
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

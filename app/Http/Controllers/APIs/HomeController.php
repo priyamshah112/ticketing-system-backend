@@ -88,29 +88,17 @@ class HomeController extends Controller
 
             $monthlyCount = Ticket::selectRaw('DATE(created_at) as Date, COUNT(*) as count')->groupBy('Date')->whereBetween('created_at',[$dateS,$dateE])->get();
 
-            $dailycount = Ticket::get();
-        // $weeklycount = Ticket::whereDate('created_at', Carbon::now()->subDays(1))->get();
-        // $monthlycount = Ticket::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
+            $dailycount = DB::table('tickets')->whereDate('created_at', '>=', Carbon::now()->format('Y-m-d'))->whereDate('created_at', '<=', Carbon::now()->addDay()->format('Y-m-d'))->count();
 
-        foreach ($dailycount as $d) {
-            $daily = [
-                'DailyCount' => $d->whereDate('created_at', Carbon::today())->count(),
-            ];
-            $weekly = [
-                'weeklyCount' => $weeklyCount,
-            ];
-            $monthly = [
-                'monthlyCount' => $monthlyCount,
-            ];
-        }
         return response()->json([
                 'success' => true,
-                'daily' => $daily,
-                'weekly' => $weekly,
-                'monthly' => $monthly,
+                'data' => [
+                    'daily' => $dailycount,
+                    'weekly' => $weeklyCount,
+                    'monthly' => $monthlyCount,
+                ]
             ]);
         } catch (\Exception $exception) {
-            dd($exception);
             $this->exceptionHandle($exception, __METHOD__);
             return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
         }
