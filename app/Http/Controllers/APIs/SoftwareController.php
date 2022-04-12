@@ -87,7 +87,9 @@ class SoftwareController extends Controller
             $data['expiry_date'] =  Carbon::createFromFormat('d/m/Y', $request->expiry_date)->format("Y-m-d");
         }
 
-        $inventory = FeederHelper::add($data, "Software", "Software", [],2);
+        $inventory = Software::updateOrCreate([
+            'id' => $request->id
+        ],$data);
        // dd($inventory);
         if($inventory){
             if($request->operation == "add"){
