@@ -17,7 +17,9 @@ class CreateRoleAccess extends Migration
             $table->id();
             $table->integer("role_id")->nullable();
             $table->integer("manager_id")->nullable(); // [1, 2]
+            $table->string('mode')->nullable();
             $table->integer("enable")->default(1);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

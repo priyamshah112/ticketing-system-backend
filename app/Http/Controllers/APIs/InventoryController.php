@@ -8,6 +8,7 @@ use App\Models\Inventory;
 use App\Models\User;
 use App\Http\Helpers\FeederHelper;
 use App\Imports\HardwareImport;
+use App\Models\ErrorLog;
 use Excel;
 
 class InventoryController extends Controller
@@ -72,11 +73,18 @@ class InventoryController extends Controller
 
     public function add(Request $request, $type){
         //status, type, enable 
-            $status = 'Available';
-            if($request->assigned_to != "")
-                $status = "Not Available";
+        $data = $request->all();
+        $status = 'Available';
+        if($request->assigned_to != "")
+            $status = "Not Available";
         
-        $inventory = FeederHelper::add($request->all(), "Inventory", "Inventory", ['type'=>$type, 'status' => $status], 2);
+        $data['type'] = $type;
+        $data['status'] = $status;
+
+        $inventory = Inventory::updateOrCreate([
+            'id' => $request->id
+        ],$data);
+
         if($inventory){
             if($request->operation == "add"){
                 $this->createTrail($inventory->id, 'Hardware Invenotry', 1);
@@ -95,9 +103,15 @@ class InventoryController extends Controller
     }
 
     public function distroy(Request $request){
-        $this->createTrail($request->delete_id, 'Hardware Invenotry', 3);
+        try {
+            $inventoryId = $request->delete_id;
+            Inventory::where('id', $inventoryId)->delete();
 
-        return FeederHelper::distroy($request, "Inventory", "Inventory", 2 , 0, 2);
+            return response()->json(['success' => true, 'message' => 'Hardware Inventory Deleted Succesfully!']);
+        } catch (\Exception $ex) {
+            $this->exceptionHandle($ex, 'deleteInventory');
+            return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
+        }
     }
 
     public function import(Request $request){

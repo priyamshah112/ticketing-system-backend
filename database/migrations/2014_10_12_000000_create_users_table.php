@@ -17,9 +17,14 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->bigInteger('country_id');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('userType', ['Admin', 'Support', 'User', 'Staff'])->nullable();
+            $table->integer('role_id');
+            $table->integer('enable')->default();
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -18,9 +18,16 @@ class CreateInventoryTable extends Migration
         // CRX 0096	Laptop	ECICR011	Dell	Inspiron 3593	JHMT723	Piso 1	Office	Michael Fernandez	In use	CRX001					
         Schema::create('inventory', function (Blueprint $table) {
             $table->id();
+            $table->string('asset_name')->nullable();
             $table->string('customID', 10)->nullable();
             $table->string("device_name")->nullable();
             $table->string("device_number")->nullable();
+            $table->double('unit_price')->nullable();
+            $table->text('description')->nullable();
+            $table->date('assigned_on')->nullable();
+            $table->string('service_tag')->nullable();
+            $table->string('express_service_code')->nullable();
+            $table->date('warranty_expire_on')->nullable();
             $table->string("brand")->nullable();
             $table->string("model")->nullable();
             $table->string("serial_number")->nullable();
@@ -32,6 +39,7 @@ class CreateInventoryTable extends Migration
             $table->text("notes")->nullable();
             $table->enum("type", ['Software', 'Hardware'])->nullable();
             $table->integer("enable")->default(1);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

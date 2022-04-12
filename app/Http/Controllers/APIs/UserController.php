@@ -28,6 +28,7 @@ use App\Imports\UserImport;
 use Illuminate\Support\Facades\Hash;
 use App\Models\AuditTrail;
 use App\Exports\ReportExport;
+use App\Models\ErrorLog;
 
 class UserController extends Controller
 {
@@ -465,19 +466,14 @@ class UserController extends Controller
     }
 
     public function distroy(Request $request){
-        $user = User::find($request->delete_id);
-        if($user){
-            if($user->enable == 1 || $user->enable == 0){
-                $user->enable = 2;
-                $user->email = $user->email;
-            }
-            $user->save();
-            $this->createTrail($user->id, 'User', 6, $user->name." is Suspended by ". Auth::user()->name);
+        try {
+            $userId = $request->delete_id;
+            User::where('id', $userId)->delete();
 
-            return $this->jsonResponse([], 1, "User Suspended successfully!"); 
-        }
-        else{
-            return $this->jsonResponse([], 2, "User not found!");
+            return response()->json(['success' => true, 'message' => 'User Deleted Succesfully!']);
+        } catch (\Exception $ex) {
+            $this->exceptionHandle($ex, 'deleteInventory');
+            return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
         }
     }
 

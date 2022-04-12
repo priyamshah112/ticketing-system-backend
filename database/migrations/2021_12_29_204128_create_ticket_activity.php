@@ -22,6 +22,7 @@ class CreateTicketActivity extends Migration
             $table->text("images")->nullable(); // ['path1', 'path2']
             
             $table->string("status")->nullable();// status at this point
+            $table->softDeletes();
 
             $table->timestamps(); // Created_at, updated_at
         });

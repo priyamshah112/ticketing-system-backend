@@ -112,7 +112,7 @@ class SoftwareController extends Controller
             $inventoryId = $request->delete_id;
             Software::where('id', $inventoryId)->delete();
 
-            return response()->json(['success' => true, 'message' => 'Inventory Deleted Succesfully!']);
+            return response()->json(['success' => true, 'message' => 'Software Inventory Deleted Succesfully!']);
         } catch (\Exception $ex) {
             $this->exceptionHandle($ex, 'deleteInventory');
             return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);

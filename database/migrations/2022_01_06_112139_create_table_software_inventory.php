@@ -24,6 +24,7 @@ class CreateTableSoftwareInventory extends Migration
             $table->string("status")->nullable();
             $table->text("notes")->nullable();
             $table->integer("enable")->default(1);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -15,12 +15,13 @@ class CreateCustomerDetails extends Migration
     {
         Schema::create('customer_details', function (Blueprint $table) {
             $table->id();
-            $table->string("hireDate")->nullable();
-            $table->string("startDate")->nullable();
-
+            $table->integer('user_id')->nullable();
             $table->string("firstName")->nullable();
             $table->string("middleName")->nullable();
             $table->string("lastName")->nullable();
+            $table->string('image_name',255)->nullable();
+            $table->string("hireDate")->nullable();
+            $table->string("startDate")->nullable();
             $table->string("preferredName")->nullable();
             $table->text("permanantAddress")->nullable();
             $table->string("homePhone")->nullable();
@@ -39,7 +40,7 @@ class CreateCustomerDetails extends Migration
             $table->string("providingLaptop")->nullable();
             $table->string("hiredAs")->nullable();
             $table->integer("enable")->default(1);
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }
