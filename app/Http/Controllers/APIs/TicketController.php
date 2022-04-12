@@ -71,7 +71,8 @@ class TicketController extends Controller
                 $errors = $this->errorsArray($validator->errors()->toArray());    
                 return $this->jsonResponse([], 0, implode(",", $errors));
             }
-            
+            $user_id = Auth::user()->id;
+            $data['created_by'] = $user_id;
             $ticket = Ticket::create($data);
             //$images = $this->uploadImages($request,$request->ticket_id);
 
