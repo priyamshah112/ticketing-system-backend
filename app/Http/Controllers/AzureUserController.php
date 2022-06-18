@@ -16,13 +16,13 @@ class AzureUserController extends Controller
 
     public function getAllUsers() {
         $graph = $this->getGraph();;
-        
+
         $users = $graph->createRequest('GET', '/users?$select=givenName,businessPhones,employeeId,jobTitle,department,companyName,country,userType,userPrincipalName,imAddresses,displayName,employeeType,surname,state,settings,usageLocation')
             ->setReturnType(Model\User::class)
             ->execute();
 
         foreach ($users as $user)
-        {            
+        {
             $user->displayName = $user->getDisplayName();
             $user->userPrincipleName = $user->getUserPrincipalName();
             $user->department = $user->getDepartment();
@@ -35,28 +35,33 @@ class AzureUserController extends Controller
 
     public function importAllUsers() {
         $graph = $this->getGraph();;
-        
+
         $users = $graph->createRequest('GET', '/users?$select=givenName,businessPhones,employeeId,jobTitle,department,companyName,country,userType,userPrincipalName,imAddresses,displayName,employeeType,surname,state,settings,usageLocation')
             ->setReturnType(Model\User::class)
             ->execute();
-        
+        $emails=[];
         foreach ($users as $user)
         {
             $data = [];
             $data['firstName'] = $user->getDisplayName();
             $data['middleName'] = $user->getDisplayName();
             $data['lastName'] = $user->getDisplayName();
-            $data['email'] = $user->getUserPrincipalName();
+            $emails[]=$data['email'] = $user->getUserPrincipalName();
             $data['userType'] = 'User';
 
             $this->updateOrCreateUser($data);
         }
-        return redirect()->back()->with('msg','imported'); 
-    }
-    
+        /*
+        *Not Available Users suspended
+        */
+        User::WhereNotIn('email',$emails)->update(['enabled' => 2]);
 
-    public function updateOrCreateUser($data) 
-    {          
+        return redirect()->back()->with('msg','imported');
+    }
+
+
+    public function updateOrCreateUser($data)
+    {
         $password =  Str::random(10);
         $data['password'] = Hash::make($password); //User::generatePassword();
         $data['enable'] = 0;
@@ -66,7 +71,7 @@ class AzureUserController extends Controller
         {
             $user = User::updateOrCreate([
                 'email' => $data['email'],
-            ],$data);         
+            ],$data);
             $data['user_id'] = $user->id;
 
             $data['user'] = $user;
@@ -77,8 +82,8 @@ class AzureUserController extends Controller
                 'view' => 'mails.welcome',
                 'subject' => 'Welcome to RX!',
                 'to' => $user->email,
-                'reciever' => 'To '.$user->name,            
-                'data' => $data    
+                'reciever' => 'To '.$user->name,
+                'data' => $data
             );
             $this->sendMail($data);
         }
@@ -86,7 +91,7 @@ class AzureUserController extends Controller
         {
             $user = User::updateOrCreate([
                 'email' => $data['email'],
-            ],$data); 
+            ],$data);
         }
     }
 }

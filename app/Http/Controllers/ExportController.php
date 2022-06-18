@@ -35,7 +35,7 @@ class ExportController extends Controller
             else if($i['enable'] == 2)
                 $i['enable1'] = 'Suspended';
 
-            
+
             unset($i['created_at']);
             unset($i['updated_at']);
             unset($i['remember_token']);
@@ -45,7 +45,7 @@ class ExportController extends Controller
             unset($i['customer_details']);
             unset($i['password']);
             unset($i['user_id']);
-            
+
             //dd($i);
             return $i;
         });
@@ -125,7 +125,7 @@ class ExportController extends Controller
 
     function generateColumnHeading($data){
         $headingKeys = array_keys((array)$data);
-        
+
         $nHeading = ['note' => 'Note',
                     'customID' => 'Inventory ID','device_name'=> 'Device Name', 'device_number'=>'Device Number',
                     'brand'=>'Brand', 'model' => 'Model', 'serial_number' => 'Serial Number',
@@ -171,7 +171,7 @@ class ExportController extends Controller
 
     //     //dd($path);
     //     // Download file with custom headers
-        
+
     //     return response()->download($path, 'sample.csv', [
     //         'Content-Type' => 'application/vnd.ms-excel',
     //         'Content-Disposition' => 'inline; filename="' . 'sample.csv' . '"'
@@ -187,7 +187,8 @@ class ExportController extends Controller
     }
 
     public function exportSoftwareSample(){
-        $path = storage_path('app/' . 'Import User Sample.csv');
+        $unique=uniqid();
+        $path = storage_path("app/" . "Import User Sample {$unique}.csv");
         return response()->download($path, 'sample.csv', [
             'Content-Type' => 'application/vnd.ms-excel',
             'Content-Disposition' => 'inline; filename="' . 'sample.csv' . '"'

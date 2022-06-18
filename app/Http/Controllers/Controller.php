@@ -21,9 +21,6 @@ class Controller extends BaseController
     public function sendMail($data){
         $this->data = $data;
 
-        //$this->to = explode(",",$this->data['to']);
-
-        //array_walk($this->to, create_function('&$val', '$val = trim($val);'));
         $this->to = array_filter(array_map('trim',explode(",", $this->data['to'])));
 
         Mail::send(['html'=>$data['view']], ['data' => $data['data']], function($message){
@@ -32,7 +29,7 @@ class Controller extends BaseController
         });
          // check for failures
         if (Mail::failures()) {
-            dd($this->to);
+            // dd($this->to);
             // return response showing failed emails
             return "Failed to send Mail";
         }
@@ -144,7 +141,7 @@ class Controller extends BaseController
                     $message = $user->name." exported entries from ".$panel;
                     break;
                 case 5:
-                    $message = $user->name." imported entries from ".$panel;
+                    $message = isset($user->name)?$user->name:"testing"." imported entries from ".$panel;
                     break;
                 // case 9:
                 //     $message = $user->name." updated entry from ".$panel."(id: ".$entry_id.") to QB." ;
@@ -157,18 +154,18 @@ class Controller extends BaseController
                     break;
             }
         }
-        $trail = AuditTrail::create([
-            'message' => $message,
-            'user_id' => $user->id,
-            'entry_id' => $entry_id,
-            'panel' => $panel,
-            'operation' => $operation
-        ]);
+        // $trail = AuditTrail::create([
+        //     'message' => $message,
+        //     'user_id' => $user->id,
+        //     'entry_id' => $entry_id,
+        //     'panel' => $panel,
+        //     'operation' => $operation
+        // ]);
     }
 
     function generateColumnHeading($data){
         $headingKeys = array_keys((array)$data);
-        
+
         $nHeading = ['note' => 'Note',
                     'customID' => 'Inventory ID','device_name'=> 'Device Name', 'device_number'=>'Device Number',
                     'brand'=>'Brand', 'model' => 'Model', 'serial_number' => 'Serial Number',

@@ -25,7 +25,6 @@ Route::group(['prefix' => 'v1'], function(){
     Route::get("/software/export", [App\Http\Controllers\APIs\SoftwareController::class, 'export']);
 
     Route::get('/countries', [App\Http\Controllers\APIs\HomeController::class, 'countries']);
-    
 
 });
 
@@ -55,7 +54,6 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post("/user/inventory/remove",[App\Http\Controllers\APIs\UserController::class, 'removeInventory']);
     Route::post("/user/get/inventory",[App\Http\Controllers\APIs\UserController::class, 'availableInventories']);
     Route::post("/user/create/submit",[App\Http\Controllers\APIs\UserController::class, 'createUserDetails']);
-    Route::post("/user/import",[App\Http\Controllers\APIs\UserController::class, 'import']);
     Route::get("/user/getlist",[App\Http\Controllers\APIs\UserController::class, 'getlist']);
     Route::get("/support-users",[App\Http\Controllers\APIs\UserController::class, 'getSupportUsers']);
 
@@ -90,6 +88,8 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
 
 
 });
+
+Route::post("/user/import",[App\Http\Controllers\APIs\UserController::class, 'import']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
