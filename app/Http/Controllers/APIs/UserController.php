@@ -2,33 +2,34 @@
 
 namespace App\Http\Controllers\APIs;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Role;
-use App\Models\RoleAccess;
-use App\Models\User;
-use App\Models\Inventory;
-use App\Models\Software;
-use App\Models\Ticket;
-use App\Models\CustomerDetails;
-use App\Models\FAQs;
-use Exception;
-use App\Http\Helpers\FeederHelper;
-use Validator;
-use Illuminate\Support\Str;
 use DB;
 use URL;
 use Auth;
-use Excel;
 use File;
 use Storage;
+use Exception;
+use Validator;
 use Carbon\Carbon;
-use App\Rules\MatchOldPassword;
-use App\Imports\UserImport;
-use Illuminate\Support\Facades\Hash;
-use App\Models\AuditTrail;
-use App\Exports\ReportExport;
+use App\Models\FAQs;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\Ticket;
 use App\Models\ErrorLog;
+use App\Models\Software;
+use App\Models\Inventory;
+use App\Models\AuditTrail;
+use App\Models\RoleAccess;
+use App\Exports\UserExport;
+use App\Imports\UserImport;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Exports\ReportExport;
+use App\Models\CustomerDetails;
+use App\Rules\MatchOldPassword;
+use App\Http\Helpers\FeederHelper;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -38,7 +39,7 @@ class UserController extends Controller
         $OpenTickets = Ticket::where('status', "In Progress")->orderBy("id", "DESC")->count();
         $PendingTickets = Ticket::where('status', "Pending")->orderBy("id", "DESC")->count();
         $ClosedTickets = Ticket::where('status', "Closed")->orderBy("id", "DESC")->count();
-        
+
         $totalHardwares = Inventory::where(['enable'=>1])->count();
         $AvailableHardwares = Inventory::whereNull('assigned_to')->where(['enable'=>1])->count();
         $AssignedHardwares = $totalHardwares - $AvailableHardwares;
@@ -52,7 +53,7 @@ class UserController extends Controller
         $OpenTicketsUSA = Ticket::where('status','=', "In Progress")
                         ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
                         ->where('customer_details.workLocation', 'USA')->count();
-                        
+
         $ClosedTicketsUSA = Ticket::where('status','=', "Closed")
                         ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
                         ->where('customer_details.workLocation', 'USA')->count();
@@ -60,21 +61,21 @@ class UserController extends Controller
         $OpenTicketsCR = Ticket::where('status','=', "In Progress")
                         ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
                         ->where('customer_details.workLocation', 'Costa Rica')->count();
-                        
-                        
+
+
         $ClosedTicketsCR = Ticket::where('status','=', "Closed")
                         ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
-                        ->where('customer_details.workLocation', 'Costa Rica')->count();   
+                        ->where('customer_details.workLocation', 'Costa Rica')->count();
 
         $ClosedTicketsIndia = Ticket::where('status','=', "Closed")
                         ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
-                        ->where('customer_details.workLocation', 'India')->count();  
-                        
-                        
+                        ->where('customer_details.workLocation', 'India')->count();
+
+
         $OpenTicketsIndia = Ticket::where('status','=', "In Progress")
                         ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
                         ->where('customer_details.workLocation', 'India')->count();
-                                         
+
         $ticketGraph = array(
             array(
                 'country'=> "USA",
@@ -118,8 +119,8 @@ class UserController extends Controller
             array('title' => "Open Tickets",
                 'lastChecked' => "last 7 Days",
                 'total'=> $OpenTickets,
-                'progress'=> 
-                array( 
+                'progress'=>
+                array(
                   'type'=> "down",
                   'value'=> "0%",
                 ),
@@ -175,7 +176,7 @@ class UserController extends Controller
         $userActivity = AuditTrail::limit(5)->orderBy("created_at", "DESC")->get();
 
         $softwareCounter = array(
-            
+
             array(
                 'title'=> "Total Software",
                 'total'=> $totalSoftware,
@@ -199,8 +200,8 @@ class UserController extends Controller
             }
             else
                 $time = $time . ' Hours Ago';
-                
-            array_push($newUserList, ['name' => $value->name, 'lastSeen' => $time, 'id' => $value->id]);    
+
+            array_push($newUserList, ['name' => $value->name, 'lastSeen' => $time, 'id' => $value->id]);
         }
 
         $supportTracker = array(
@@ -245,9 +246,9 @@ class UserController extends Controller
         $recentOpenTickets = Ticket::where('status','!=', "Closed")->orderBy("id", "DESC")->limit(20);
         $HardwaresList = Inventory::where("enable", 1);
         $SoftwaresList = Software::where("enable", 1);
-   
+
         switch($userType){
-            case 'Admin': 
+            case 'Admin':
                     $totalHardwares = $totalHardwares->where( 'status', 'Available');
                     $totalSoftware->where('status','Available');
                     break;
@@ -273,7 +274,7 @@ class UserController extends Controller
                 $SoftwaresList = $SoftwaresList->where("assigned_to", $user_id);
                 break;
         }
-      
+
         $totalHardwares = $totalHardwares->count();
         $totalSoftware = $totalSoftware->count();
         $tickets = $tickets->get();
@@ -302,7 +303,7 @@ class UserController extends Controller
         $hiredAs = $this->collection2Array(CustomerDetails::select('hiredAs')->where("enable", 1)->groupBy('hiredAs')->get(), "hiredAs");
         $exportUrl = route('exportUsers');
         return $this->jsonResponse(['user'=>$user, 'roles' => $roles, 'projectName' => $projectName, 'clientName' => $clientName,
-            'workLocation' => $workLocation, 'hiredAs' => $hiredAs, 'exportUrl' => $exportUrl, 
+            'workLocation' => $workLocation, 'hiredAs' => $hiredAs, 'exportUrl' => $exportUrl,
             'sampleImport' => route('exportUserSample') ], 1);
     }
 
@@ -336,20 +337,20 @@ class UserController extends Controller
             $validator =  Validator::make($request->all(), [
                 'email' => 'unique:users|email|max:100',
              ]);
-             
+
             if ($validator->fails()){
-                $errors = $this->errorsArray($validator->errors()->toArray());    
+                $errors = $this->errorsArray($validator->errors()->toArray());
                 return $this->jsonResponse([], 2, "Email Id is already registered!");
             }
-            
+
             $password =  Str::random(10);
             $data['password'] = Hash::make($password); //User::generatePassword();
             $data['enable'] = 0;
             $data['name'] = $data['firstName'].' '.$data['middleName'].' '.$data['lastName'];
-            $user = User::create($data);         
+            $user = User::create($data);
             $data['user_id'] = $user->id;
             $customer_details = CustomerDetails::create($data);
-            $token = User::getToken($user); 
+            $token = User::getToken($user);
 
             $data['user'] = $user;
             $data['resetLink'] = $request->url;
@@ -359,13 +360,13 @@ class UserController extends Controller
                 'view' => 'mails.welcome',
                 'subject' => 'Welcome to RX!',
                 'to' => $user->email,
-                'reciever' => 'To '.$user->name,            
-                'data' => $data    
+                'reciever' => 'To '.$user->name,
+                'data' => $data
             );
             $this->sendMail($data);
             $this->createTrail($user->id, 'User', 1);
-            
-            return $this->jsonResponse([], 1, "User invitation is sent!"); 
+
+            return $this->jsonResponse([], 1, "User invitation is sent!");
 
         }
         else{
@@ -379,7 +380,7 @@ class UserController extends Controller
                 $userDetails = FeederHelper::add($request->all(), "CustomerDetails", "CustomerDetails", [], 2);
                 $this->createTrail($user->id, 'User', 2);
 
-                return $this->jsonResponse([], 1, "User updated successfully!"); 
+                return $this->jsonResponse([], 1, "User updated successfully!");
             }
             else{
                 return $this->jsonResponse([], 2, "User not found!");
@@ -387,7 +388,7 @@ class UserController extends Controller
         }
     }
 
-    
+
 
     public function addInventory(Request $request){
         $user = User::where('id', $request->user_id)->with('inventories', 'softwares')->first();
@@ -432,7 +433,7 @@ class UserController extends Controller
 
                 }
             }
-            return $this->jsonResponse([], 1, "Inventory assigned to ".$user->name." successfully!"); 
+            return $this->jsonResponse([], 1, "Inventory assigned to ".$user->name." successfully!");
         }
         else{
             return $this->jsonResponse([], 2, "User not found!");
@@ -448,16 +449,16 @@ class UserController extends Controller
             Inventory::where(['id' => $request->id])->update(["assigned_to"=> null, "assigned_on" => null, 'status' => 'Available']);
             $this->createTrail($user->id, 'User', 6, "Hardware Inventory(".$id.") Removed From ".$user->name);
 
-            return $this->jsonResponse([], 1, "Hardware Inventory is removed from the user!"); 
+            return $this->jsonResponse([], 1, "Hardware Inventory is removed from the user!");
         }
         else if($type == "software"){
             $inventory = Inventory::where(['id' => $request->id])->first();
             $user = User::find($inventory->assigned_to);
-            
+
             Software::where(['id' => $request->id])->update(["assigned_to"=> null, "assigned_on" => null, 'status' => 'Available']);
             $this->createTrail($user->id, 'User', 6, "Software Inventory(".$id.") Removed From ".$user->name);
 
-            return $this->jsonResponse([], 1, "Software Inventory is removed from the user!"); 
+            return $this->jsonResponse([], 1, "Software Inventory is removed from the user!");
         }
         else{
             return $this->jsonResponse([], 2, "Wrong Operation!");
@@ -468,9 +469,20 @@ class UserController extends Controller
     public function distroy(Request $request){
         try {
             $userId = $request->delete_id;
-            User::where('id', $userId)->delete();
-
-            return response()->json(['success' => true, 'message' => 'User Deleted Succesfully!']);
+            $user= User::where('id', $userId);
+            if(empty($user->first())){
+                return response()->json(['success' => false, 'message' => 'User Not Found']);
+            }else{
+                $user->update(['enable'=>2]);
+                $inventory=Inventory::where('assigned_to',$userId);
+                if(!empty($inventory->first())){
+                    $inventory->update([
+                        'assigned_to'=>null,
+                        'status'=>"Not Available"
+                    ]);
+                }
+            }
+            return response()->json(['success' => true, 'message' => 'User Suspended successfully!']);
         } catch (\Exception $ex) {
             $this->exceptionHandle($ex, 'deleteInventory');
             return response()->json(['success' => false, 'message' => ErrorLog::ExceptionMessage]);
@@ -478,21 +490,21 @@ class UserController extends Controller
     }
 
     public function createUserDetails(Request $request){
-        return $this->jsonResponse([], 1, "User Details added successfully!"); 
+        return $this->jsonResponse([], 1, "User Details added successfully!");
     }
 
     public function getlist(Request $request){
         $user = User::with('userDetails')->where('userType', 'User')->whereIn("enable", [0,1])->get();
-        
+
         return $this->jsonResponse([
             'user' => $user,
         ], 1);
 
     }
-    
+
     public function getSupportUsers(Request $request){
         $user = User::with('userDetails')->where('userType', 'Support')->whereIn("enable", [0,1])->get();
-        
+
         return $this->jsonResponse([
             'user' => $user,
         ], 1);
@@ -508,28 +520,34 @@ class UserController extends Controller
             $availableInventory = Inventory::whereNull("assigned_to")->get();
             $userSoftwareInventory = Software::where("assigned_to", $user_id)->get();
             $availableSoftwareInventory = Software::whereNull("assigned_to")->get();
-            
-            return $this->jsonResponse(['userInventory'=> $userInventory, 'availableInventory'=>$availableInventory, 
-                'userSoftwareInventory' => $userSoftwareInventory, 'availableSoftwareInventory'=>$availableSoftwareInventory], 1, ""); 
+
+            return $this->jsonResponse(['userInventory'=> $userInventory, 'availableInventory'=>$availableInventory,
+                'userSoftwareInventory' => $userSoftwareInventory, 'availableSoftwareInventory'=>$availableSoftwareInventory], 1, "");
         }
         else{
             return $this->jsonResponse([], 2, "User not found!");
         }
 
     }
-    
-    public function import(Request $request){
 
-        $path = $request->file->store('imports');
+    public function import(Request $request){
+        // dd();
+        $path = $request->file('imports')->store('imports');
         $import = new UserImport();
+        // print_r($path);
+        // exit();
         Excel::import($import, $path);
+
         $this->createTrail(0, 'User', 5);
         $lines = [];
         $selectedPeriod = [];
         if(sizeof($import->entries) > 0){
+
             $headings = $import->heading;
             $p = 'Pending Entries-'.Carbon::now()->format('m-d-y H:i').'.xlsx';
-            $path =  Excel::store(new ReportExport( collect($import->entries), [], [], $headings, ''), $p); 
+            // print_r($import);
+            // exit();
+            $path =  Excel::store(new UserExport($import->entries, [], [], $headings, ''), $p);
             $p =  route("downloadErrorExcel", ['file' => $p]);
             return $this->jsonResponse(['filePath' => $p], 0,"Some entries failed while import!");
 
@@ -547,11 +565,11 @@ class UserController extends Controller
         return $file;
     }
 
-     //Filter Conditions 
-    public function checkConditions($request, $query){        
+     //Filter Conditions
+    public function checkConditions($request, $query){
         $data = $request->all();
         $condition = array();
-       
+
         foreach ($data as $key => $value) {
             //array_push($condition, $key.' LIKE "%'.$value.'%"');
             if($key == 'status'){
@@ -565,7 +583,7 @@ class UserController extends Controller
                     case 'suspended':
                         $query = $query->where('users.enable', 2);
                         break;
-                    default: 
+                    default:
                         break;
                 }
 
@@ -585,7 +603,7 @@ class UserController extends Controller
             'new_confirm_password' => ['same:new_password'],
         ]);
         User::find(auth()->user()->id)->update(['password'=> Hash::make($request->new_password)]);
-        return $this->jsonResponse([], 1, "Password changed successfully!"); 
+        return $this->jsonResponse([], 1, "Password changed successfully!");
 
     }
 }

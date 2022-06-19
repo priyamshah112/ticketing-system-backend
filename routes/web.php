@@ -40,7 +40,7 @@ Route::get("/import/sample/hardware", [App\Http\Controllers\ExportController::cl
 Route::get("/import/sample/faq", [App\Http\Controllers\ExportController::class, 'exportFaqSample'])->name('exportFaqSample');
 Route::get("/download/importedExcel/{file}", [App\Http\Controllers\ExportController::class, 'downloadErrorExcel'])->name('downloadErrorExcel');
 
-Route::get('/artisan/clear', function () { 
+Route::get('/artisan/clear', function () {
     Artisan::call('storage:link');
     Artisan::call('config:clear');
     Artisan::call('route:clear');

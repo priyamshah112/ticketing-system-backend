@@ -2,105 +2,115 @@
 
 namespace App\Imports;
 
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithStartRow;
-use App\Models\User;
-use App\Models\CustomerDetails;
 use Mail;
+use App\Models\User;
 use Illuminate\Support\Str;
+use App\Models\CustomerDetails;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToModel;
 Use URL;
-use Validator;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 
-class UserImport implements ToModel, WithStartRow
+class UserImport implements ToCollection, WithHeadingRow
 {
 
     public $entries = [];
     public $heading = null;
-    public function model(array $row)
+    public function collection(Collection $collection)
     {
-        if($this->heading == null){
-            $this->heading = $row;
-            return null;
-        }
-        $password =  Str::random(10);
-        $user = User::where('email', $row[1])->first();
-        if($user){
-            $row[20] = "Email id is already in use!";
-            array_push($this->entries, $row);
-            return null;
-        }
-        $data['email'] = $row[1];
-        $validator = Validator::make($data, [
-            'Email'=>'required|email:rfc,dns'
-        ]);
+        $this->collection = $collection->transform(function ($row) {
 
-        if ($validator->fails()){
-            $errors = $this->errorsArray($validator->errors()->toArray());    
-            $row[20] = implode(",", $errors);
-            array_push($this->entries, $row);
-            //$this->entries->add($row);
-            return null;
-        }
+            $password =  Str::random(10);
+            $user = User::where('email', $row['email'])->first();
+            if($user){
+                $row['errors'] = "Email id is already in use!";
+                array_push($this->entries, $row);
+
+            }else{
+
+                $data['email'] = $this->checkExistOrNot($row,'email');
 
 
-        $user = User::create([
-            'name' => $row[0],
-            'email' => $row[1], 
-            'password' => $password,
-            'userType'=> $row[2], 
-            'role_id' => 0,
-            'enable' => 0
-        ]);
+                $validator = Validator::make($data, [
+                    'email'=>'required|email:rfc,dns'
+                ]);
 
 
-        $data['name'] = $user->name;
-        $data['user_id'] = $user->id;
-        $data['user'] = $user;
-        $data['resetLink'] = ''; // $request->url;
-        $data['password'] = $password;
-        $data['baseURL'] = URL::to('/');
 
-        $data['hireDate'] = $row[3]; 
-        $data['startDate'] = $row[4];
-        $data['firstName'] = $row[5]; 
-        $data['middleName'] = $row[6]; 
-        $data['lastName'] = $row[7]; 
-        $data['preferredName'] = $row[0]; 
-        $data['permanantAddress'] = $row[8]; 
-        $data['homePhone'] = $row[9]; 
-        $data['cellPhone'] = $row[10]; 
-        $data['email'] = $row[1]; 
-        $data['title'] = $row[11]; 
-        $data['projectName'] = $row[12]; 
-        $data['clientName'] = $row[13]; 
-        $data['clientLocation'] = $row[14]; 
-        $data['workLocation'] = $row[15]; 
-        $data['supervisorName'] = $row[16]; 
-        $data['request'] = $row[17]; 
-        $data['providingLaptop'] = $row[17]; 
-        $data['hiredAs'] = $row[18];
+                if ($validator->fails()){
+                    $errors = $this->errorsArray($validator->errors()->toArray());
+                    $row['errors'] = implode(",", $errors);
+                    array_push($this->entries, $row);
+                }
 
-        $customer_details = CustomerDetails::create($data);
 
-        $data = array(
-            'view' => 'mails.welcome',
-            'subject' => 'Welcome to RX!',
-            'to' => $user->email,
-            'reciever' => 'To '.$user->name,            
-            'data' => $data    
-        );
-        //dd($data);
-        $this->sendMail($data);
+                $user = User::create([
+                    'name' => $this->checkExistOrNot($row,'name'),
+                    'email' => $this->checkExistOrNot($row,'email'),
+                    'password' => $password,
+                    'userType'=>$this->checkExistOrNot($row,'userType'),
+                    'role_id' => 0,
+                    'enable' => 0
+                ]);
+
+
+                $data['name'] = $user->name;
+                $data['user_id'] = $user->id;
+                $data['user'] = $user;
+                $data['resetLink'] = ''; // $request->url;
+                $data['password'] = $password;
+                $data['baseURL'] = URL::to('/');
+
+                $data['hireDate'] = $this->checkExistOrNot($row,'hireDate');
+                $data['startDate'] = $this->checkExistOrNot($row,'startDate');
+                $data['firstName'] = $this->checkExistOrNot($row,'firstName');
+                $data['middleName'] = $this->checkExistOrNot($row,'middleName');
+                $data['lastName'] = $this->checkExistOrNot($row,'lastName');
+                $data['preferredName'] = $this->checkExistOrNot($row,'preferredName');
+                $data['permanantAddress'] = $this->checkExistOrNot($row,'permanantAddress');
+                $data['homePhone'] = $this->checkExistOrNot($row,'homePhone');
+                $data['cellPhone'] = $this->checkExistOrNot($row,'cellPhone');
+                $data['title'] = $this->checkExistOrNot($row,'title');
+                $data['projectName'] = $this->checkExistOrNot($row,'projectName');
+                $data['clientName'] = $this->checkExistOrNot($row,'clientName');
+                $data['clientLocation'] =$this->checkExistOrNot($row,'clientLocation');
+                $data['workLocation'] = $this->checkExistOrNot($row,'workLocation');
+                $data['supervisorName'] = $this->checkExistOrNot($row,'supervisorName');
+                $data['request'] = $this->checkExistOrNot($row,'request');
+                $data['providingLaptop'] = $this->checkExistOrNot($row,'providingLaptop');
+                $data['hiredAs'] = $this->checkExistOrNot($row,'hiredAs');
+
+                $customer_details = CustomerDetails::create($data);
+
+                $data = array(
+                    'view' => 'mails.welcome',
+                    'subject' => 'Welcome to RX!',
+                    'to' => $user->email,
+                    'reciever' => 'To '.$user->name,
+                    'data' => $data
+                );
+
+                $this->sendMail($data);
+            }
+        });
     }
-    // `user_id`, 
-    // `name`, `email`, `email_verified_at`, `password`, `userType`, `role_id`, `enable`, `remember_token`, `created_at`,
+
+    public function validationFields($rows)
+    {
+
+    }
 
     public function startRow(): int
     {
         return 1;
+    }
+
+    public function checkExistOrNot($val,$key){
+        return isset($val[$key])?$val[$key]:null;
     }
 
     public $successStatus = 200;
@@ -115,7 +125,7 @@ class UserImport implements ToModel, WithStartRow
         });
 
         if (Mail::failures()) {
-            dd($this->to);
+            // dd($this->to);
             return "Failed to send Mail!";
         }
         else{
@@ -131,7 +141,7 @@ class UserImport implements ToModel, WithStartRow
                 array_push($e, $v);
             }
         }
-        return $e; 
+        return $e;
 
     }
 

@@ -1,7 +1,7 @@
 <?php
-   
+
 namespace App\Http\Controllers\APIs;
-   
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIs\BaseController as BaseController;
 use App\Providers\RouteServiceProvider;
@@ -27,7 +27,7 @@ class AuthController extends BaseController
      */
     public function login(Request $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             $user_id = Auth::user()->id;
             $user = User::where("id", $user_id)->with('userRole.roleAccess.manager', "userDetails")->first();
             if($user->enable == 2){
@@ -38,14 +38,14 @@ class AuthController extends BaseController
                 $this->createTrail(0, 'User', 99);
                 $user->enable = 1;
                 $user->save();
-                $user['token'] =  $user->createToken('MyApp')->accessToken; 
+                $user['token'] =  $user->createToken('MyApp')->accessToken;
                 return $this->jsonResponse($user, 1, 'User login successfully.');
             }
-            
-        } 
-        else{ 
+
+        }
+        else{
             return $this->jsonResponse([], 2, 'Username or Password is incorred!');
-        } 
+        }
     }
 
     public function reset(Request $request)
@@ -64,7 +64,7 @@ class AuthController extends BaseController
         // database. Otherwise we will parse the error and return the response.
 
         if ($validator->fails()){
-            $errors = $this->errorsArray($validator->errors()->toArray());    
+            $errors = $this->errorsArray($validator->errors()->toArray());
             return $this->jsonResponse([], 0, implode(",", $errors));
         }
 
@@ -76,7 +76,7 @@ class AuthController extends BaseController
             // if($request->has('userType') && $request->userType == "user"){
             //     $CustomerDetails = FeederHelper::add($request->all(), "CustomerDetails", "CustomerDetails", ['user_id' => $user->id], 2);
             // }
-            
+
             if($user){
                $op = $user->update(['password'=> bcrypt($request->password)]);
                if($op){
@@ -107,67 +107,44 @@ class AuthController extends BaseController
     // }
 
     public function forgot_password(Request $request){
-    $input = $request->all();
-    $rules = array(
-        'email' => "required|email",
-    );
-    $validator = Validator::make($input, $rules);
-    if ($validator->fails()) {
-        return $this->jsonResponse([], 2, $validator->errors()->first());
+        $input = $request->all();
+        $rules = array(
+            'email' => "required|email",
+        );
+        $arr=[];
+        $validator = Validator::make($input, $rules);
+        if ($validator->fails()) {
+            return $this->jsonResponse([], 2, $validator->errors()->first());
+        } else {
+            try {
+                $user = User::where("email", $request->email)->first();
+                if($user){
+                    $data['user'] = $user;
+                    $token = User::getToken($user);
+                    $data['resetLink'] = 'http://'.$request->url.'/user/resetpassword?token='.$token.'&email='.$user->email;
+                    $data['baseURL'] = URL::to('/');
+                    $data = array(
+                        'view' => 'mails.forgetPasswordRequest',
+                        'subject' => 'Welcome to RX!',
+                        'subject' => 'Password Reset Request!',
+                        'to' => $user->email,
+                        'reciever' => 'To '.$user->name,
+                        'data' => $data
+                    );
+                    //dd($data);
 
-        //$arr = array("status" => 400, "message" => $validator->errors()->first(), "data" => array());
-    } else {
-        try {
-            $user = User::where("email", $request->email)->first();
-            if($user){
-                $data['user'] = $user;
-                $token = User::getToken($user); 
-                $data['resetLink'] = 'http://'.$request->url.'/user/resetpassword?token='.$token.'&email='.$user->email;
-                $data['baseURL'] = URL::to('/');
-                $data = array(
-                    'view' => 'mails.forgetPasswordRequest',
-                    'subject' => 'Welcome to RX!',
-                    'subject' => 'Password Reset Request!',
-                    'to' => $user->email,
-                    'reciever' => 'To '.$user->name,            
-                    'data' => $data    
-                );
-                //dd($data);
-                
-                $this->sendMail($data);
-                return $this->jsonResponse([], 1, "Password reset link is sent!"); 
+                    $this->sendMail($data);
+                    return $this->jsonResponse([], 1, "Password reset link is sent!");
+                }
+                else{
+                    return $this->jsonResponse([], 2, "User is not match with our system entries!");
+                }
             }
-            else{
-                return $this->jsonResponse([], 2, "User is not match with our system entries!"); 
-             }
+            catch (Exception $ex) {
+                return $this->jsonResponse([], 2, $ex->getMessage());
+            }
         }
-        catch (Exception $ex) {
-             return $this->jsonResponse([], 2, $ex->getMessage());
-        }
-        //     $response = Password::sendResetLink($request->only('email'), function (Message $message) {
-        //         $message->subject($this->getEmailSubject());
-        //     });
-        //     dd($response);
-        //     switch ($response) {
-        //         case Password::RESET_LINK_SENT:
-        //             return \Response::json(array("status" => 200, "message" => trans($response), "data" => array()));
-        //         case Password::INVALID_USER:
-        //             return $this->jsonResponse([], 2, trans($response));
-
-        //             //return \Response::json(array("status" => 400, "message" => trans($response), "data" => array()));
-        //     }
-
-        // } catch (\Swift_TransportException $ex) {
-        //     return $this->jsonResponse([], 2, $ex->getMessage());
-
-        //     //$arr = array("status" => 400, "message" => $ex->getMessage(), "data" => []);
-        // } catch (Exception $ex) {
-        //     return $this->jsonResponse([], 2, $ex->getMessage());
-
-        //     //$arr = array("status" => 400, "message" => $ex->getMessage(), "data" => []);
-        // }
+        return \Response::json($arr);
     }
-    return \Response::json($arr);
-}
-    
+
 }

@@ -3,10 +3,8 @@
 
 namespace App\Http\Controllers\APIs;
 
-
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
-
 
 class BaseController extends Controller
 {
@@ -49,11 +47,11 @@ class BaseController extends Controller
         return response()->json($response, $code);
     }
 
-    //Filter Conditions 
-    public function checkConditions($request, $query){        
+    //Filter Conditions
+    public function checkConditions($request, $query){
         $data = $request->all();
         $condition = array();
-       
+
         foreach ($data as $key => $value) {
             //array_push($condition, $key.' LIKE "%'.$value.'%"');
             $query = $query->where($key, $value);

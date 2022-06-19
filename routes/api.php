@@ -25,7 +25,6 @@ Route::group(['prefix' => 'v1'], function(){
     Route::get("/software/export", [App\Http\Controllers\APIs\SoftwareController::class, 'export']);
 
     Route::get('/countries', [App\Http\Controllers\APIs\HomeController::class, 'countries']);
-    
 
 });
 

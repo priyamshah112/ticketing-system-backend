@@ -32,7 +32,7 @@ class Controller extends BaseController
         });
          // check for failures
         if (Mail::failures()) {
-            dd($this->to);
+            // dd($this->to);
             // return response showing failed emails
             return "Failed to send Mail";
         }
@@ -168,7 +168,7 @@ class Controller extends BaseController
 
     function generateColumnHeading($data){
         $headingKeys = array_keys((array)$data);
-        
+
         $nHeading = ['note' => 'Note',
                     'customID' => 'Inventory ID','device_name'=> 'Device Name', 'device_number'=>'Device Number',
                     'brand'=>'Brand', 'model' => 'Model', 'serial_number' => 'Serial Number',
