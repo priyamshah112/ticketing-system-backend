@@ -7,7 +7,6 @@ use App\Models\FAQs;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\FeederHelper;
 
-
 class FAQsController extends Controller
 {
     public function index(Request $request){

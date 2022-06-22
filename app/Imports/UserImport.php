@@ -45,56 +45,58 @@ class UserImport implements ToCollection, WithHeadingRow
                     $errors = $this->errorsArray($validator->errors()->toArray());
                     $row['errors'] = implode(",", $errors);
                     array_push($this->entries, $row);
+                }else{
+
+                    $user = User::create([
+                        'name' => $this->checkExistOrNot($row,'name'),
+                        'email' => $this->checkExistOrNot($row,'email'),
+                        'password' => $password,
+                        'userType'=>$this->checkExistOrNot($row,'userType'),
+                        'role_id' => 0,
+                        'enable' => 0
+                    ]);
+
+
+                    $data['name'] = $user->name;
+                    $data['user_id'] = $user->id;
+                    $data['user'] = $user;
+                    $data['resetLink'] = ''; // $request->url;
+                    $data['password'] = $password;
+                    $data['baseURL'] = URL::to('/');
+
+                    $data['hireDate'] = $this->checkExistOrNot($row,'hireDate');
+                    $data['startDate'] = $this->checkExistOrNot($row,'startDate');
+                    $data['firstName'] = $this->checkExistOrNot($row,'firstName');
+                    $data['middleName'] = $this->checkExistOrNot($row,'middleName');
+                    $data['lastName'] = $this->checkExistOrNot($row,'lastName');
+                    $data['preferredName'] = $this->checkExistOrNot($row,'preferredName');
+                    $data['permanantAddress'] = $this->checkExistOrNot($row,'permanantAddress');
+                    $data['homePhone'] = $this->checkExistOrNot($row,'homePhone');
+                    $data['cellPhone'] = $this->checkExistOrNot($row,'cellPhone');
+                    $data['title'] = $this->checkExistOrNot($row,'title');
+                    $data['projectName'] = $this->checkExistOrNot($row,'projectName');
+                    $data['clientName'] = $this->checkExistOrNot($row,'clientName');
+                    $data['clientLocation'] =$this->checkExistOrNot($row,'clientLocation');
+                    $data['workLocation'] = $this->checkExistOrNot($row,'workLocation');
+                    $data['supervisorName'] = $this->checkExistOrNot($row,'supervisorName');
+                    $data['request'] = $this->checkExistOrNot($row,'request');
+                    $data['providingLaptop'] = $this->checkExistOrNot($row,'providingLaptop');
+                    $data['hiredAs'] = $this->checkExistOrNot($row,'hiredAs');
+
+                    $customer_details = CustomerDetails::create($data);
+
+                    $data = array(
+                        'view' => 'mails.welcome',
+                        'subject' => 'Welcome to RX!',
+                        'to' => $user->email,
+                        'reciever' => 'To '.$user->name,
+                        'data' => $data
+                    );
+
+                    $this->sendMail($data);
                 }
 
 
-                $user = User::create([
-                    'name' => $this->checkExistOrNot($row,'name'),
-                    'email' => $this->checkExistOrNot($row,'email'),
-                    'password' => $password,
-                    'userType'=>$this->checkExistOrNot($row,'userType'),
-                    'role_id' => 0,
-                    'enable' => 0
-                ]);
-
-
-                $data['name'] = $user->name;
-                $data['user_id'] = $user->id;
-                $data['user'] = $user;
-                $data['resetLink'] = ''; // $request->url;
-                $data['password'] = $password;
-                $data['baseURL'] = URL::to('/');
-
-                $data['hireDate'] = $this->checkExistOrNot($row,'hireDate');
-                $data['startDate'] = $this->checkExistOrNot($row,'startDate');
-                $data['firstName'] = $this->checkExistOrNot($row,'firstName');
-                $data['middleName'] = $this->checkExistOrNot($row,'middleName');
-                $data['lastName'] = $this->checkExistOrNot($row,'lastName');
-                $data['preferredName'] = $this->checkExistOrNot($row,'preferredName');
-                $data['permanantAddress'] = $this->checkExistOrNot($row,'permanantAddress');
-                $data['homePhone'] = $this->checkExistOrNot($row,'homePhone');
-                $data['cellPhone'] = $this->checkExistOrNot($row,'cellPhone');
-                $data['title'] = $this->checkExistOrNot($row,'title');
-                $data['projectName'] = $this->checkExistOrNot($row,'projectName');
-                $data['clientName'] = $this->checkExistOrNot($row,'clientName');
-                $data['clientLocation'] =$this->checkExistOrNot($row,'clientLocation');
-                $data['workLocation'] = $this->checkExistOrNot($row,'workLocation');
-                $data['supervisorName'] = $this->checkExistOrNot($row,'supervisorName');
-                $data['request'] = $this->checkExistOrNot($row,'request');
-                $data['providingLaptop'] = $this->checkExistOrNot($row,'providingLaptop');
-                $data['hiredAs'] = $this->checkExistOrNot($row,'hiredAs');
-
-                $customer_details = CustomerDetails::create($data);
-
-                $data = array(
-                    'view' => 'mails.welcome',
-                    'subject' => 'Welcome to RX!',
-                    'to' => $user->email,
-                    'reciever' => 'To '.$user->name,
-                    'data' => $data
-                );
-
-                $this->sendMail($data);
             }
         });
     }

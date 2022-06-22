@@ -549,7 +549,7 @@ class UserController extends Controller
             // exit();
             $path =  Excel::store(new UserExport($import->entries, [], [], $headings, ''), $p);
             $p =  route("downloadErrorExcel", ['file' => $p]);
-            return $this->jsonResponse(['filePath' => $p], 0,"Some entries failed while import!");
+            // return $this->jsonResponse(['filePath' => $p], 0,"Some entries failed while import!");
 
         }
         return $this->jsonResponse([], 1,"Users Imported Successfully!");
