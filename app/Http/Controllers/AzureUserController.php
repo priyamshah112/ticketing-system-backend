@@ -54,7 +54,7 @@ class AzureUserController extends Controller
         /*
         *Not Available Users suspended
         */
-        User::WhereNotIn('email',$emails)->update(['enabled' => 2]);
+        User::WhereNotIn('email',$emails)->update(['enable' => 2]);
 
         return redirect()->back()->with('msg','imported');
     }
