@@ -18,7 +18,7 @@ Route::group(['prefix' => 'v1'], function(){
         return "Welcome To Ticketing System Api Library";
     });
     Route::post("/login",[App\Http\Controllers\APIs\AuthController::class, 'login']);
-    Route::post("/reset",[App\Http\Controllers\APIs\AuthController::class, 'reset']);
+    Route::post("/reset-password",[App\Http\Controllers\APIs\AuthController::class, 'reset_password']);
     Route::post('/forgot-password', [App\Http\Controllers\APIs\AuthController::class, 'forgot_password']);
 
     // Exports
