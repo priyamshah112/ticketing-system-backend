@@ -17,6 +17,13 @@ class ProfileResource extends JsonResource
         $images = url('image/' . $this->whenLoaded('customerDetails')->image_name ?? "");
         return [
             'id' => $this->id,
+            'first_name' => $this->whenLoaded('customerDetails')->firstName,
+            'middle_name' => $this->whenLoaded('customerDetails')->middleName,
+            'last_name' => $this->whenLoaded('customerDetails')->lastName,
+            'email' => $this->email,
+            'phone' => $this->whenLoaded('customerDetails')->cellPhone,
+            'location' => $this->whenLoaded('customerDetails')->clientLocation,
+            'role' => $this->userType,
             'image_name' => $images,
         ];
     }
