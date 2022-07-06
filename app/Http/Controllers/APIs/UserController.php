@@ -541,17 +541,17 @@ class UserController extends Controller
         $this->createTrail(0, 'User', 5);
         $lines = [];
         $selectedPeriod = [];
-        if(sizeof($import->entries) > 0){
+        // if(sizeof($import->entries) > 0){
 
-            $headings = $import->heading;
-            $p = 'Pending Entries-'.Carbon::now()->format('m-d-y H:i').'.xlsx';
+        //     $headings = $import->heading;
+        //     $p = 'Pending Entries-'.Carbon::now()->format('m-d-y H:i').'.xlsx';
             // print_r($import);
             // exit();
-            $path =  Excel::store(new UserExport($import->entries, [], [], $headings, ''), $p);
-            $p =  route("downloadErrorExcel", ['file' => $p]);
-            return $this->jsonResponse(['filePath' => $p], 0,"Some entries failed while import!");
+        //     $path =  Excel::store(new UserExport($import->entries, [], [], $headings, ''), $p);
+        //     $p =  route("downloadErrorExcel", ['file' => $p]);
+        //     return $this->jsonResponse(['filePath' => $p], 0,"Some entries failed while import!");
 
-        }
+        // }
         return $this->jsonResponse([], 1,"Users Imported Successfully!");
     }
 

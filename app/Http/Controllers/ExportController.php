@@ -179,10 +179,10 @@ class ExportController extends Controller
     // }
 
     public function exportUserSample(){
-        $path = storage_path('app/' . 'Import User Sample.csv');
-        return response()->download($path, 'User Import Sample.csv', [
+        $path = storage_path('app/' . 'User Import Sample.xlsx');
+        return response()->download($path, 'User Import Sample.xlsx', [
             'Content-Type' => 'application/vnd.ms-excel',
-            'Content-Disposition' => 'inline; filename="' . 'User Import Sample.csv' . '"'
+            'Content-Disposition' => 'inline; filename="' . 'User Import Sample.xlsx' . '"'
         ]);
     }
 
