@@ -51,8 +51,7 @@ class ProfileController extends Controller
             {
                 $photoExtention = $image->getClientOriginalExtension();
                 $photo_name = $now.'.'.$photoExtention;
-                $photopath = public_path('image');
-                $image->move($photopath, $photo_name);
+                $image->storeAs('/public/image', $photo_name);
             }
             else
             {

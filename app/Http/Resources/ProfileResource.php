@@ -14,7 +14,7 @@ class ProfileResource extends JsonResource
      */
     public function toArray($request)
     {
-        $images = url('image/' . $this->whenLoaded('customerDetails')->image_name ?? "");
+        $images = url('storage/image/' . $this->whenLoaded('customerDetails')->image_name ?? "");
         return [
             'id' => $this->id,
             'first_name' => $this->whenLoaded('customerDetails')->firstName,
