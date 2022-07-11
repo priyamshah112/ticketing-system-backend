@@ -84,7 +84,7 @@ class SoftwareController extends Controller
             $data['assigned_on'] = Carbon::now()->toDateString();
         }
         if($request->expiry_date != ""){
-            $data['expiry_date'] =  Carbon::createFromFormat('d/m/Y', $request->expiry_date)->format("Y-m-d");
+            $data['expiry_date'] =  Carbon::parse($request->expiry_date)->format("Y-m-d");
         }
 
         $inventory = Software::updateOrCreate([

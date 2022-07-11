@@ -28,7 +28,8 @@ class HardwareImport implements ToModel, WithStartRow
                 }
             }
 
-            $data =  ['customID' => $row[0],
+            $data =  [
+                'customID' => $row[0],
                 'device_name' => $row[1],
                 'device_number' => $row[2],
                 'brand' => $row[3],

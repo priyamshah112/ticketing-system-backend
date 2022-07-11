@@ -5,11 +5,9 @@ namespace App\Http\Controllers\APIs;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Inventory;
-use App\Models\User;
-use App\Http\Helpers\FeederHelper;
 use App\Imports\HardwareImport;
 use App\Models\ErrorLog;
-use Excel;
+use Maatwebsite\Excel\Excel;
 
 class InventoryController extends Controller
 {

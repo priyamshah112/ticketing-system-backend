@@ -84,7 +84,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post("/faq/delete",[App\Http\Controllers\APIs\FAQsController::class, 'distroy']);
 
     Route::get('user-details', [ProfileController::class, 'viewProfile']);
-    Route::post('update-profile', [ProfileController::class, 'updateProfile']);
+    Route::post('/profile/update', [ProfileController::class, 'updateProfile']);
 
 
 
