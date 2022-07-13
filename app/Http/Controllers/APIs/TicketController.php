@@ -14,6 +14,7 @@ use Storage;
 use App\Models\User;
 use App\Models\Software;
 use App\Models\Inventory;
+use Illuminate\Support\Facades\DB;
 use URL;
 
 class TicketController extends Controller
@@ -58,37 +59,52 @@ class TicketController extends Controller
                                 ], 1);
     }
 
-    public function add(Request $request){
-       
+    public function add(Request $request)
+    {      
         $data = $request->all();
         if($request->operation == 'add'){
             $validator =  Validator::make($request->all(), [
                 'subject' => 'required',
                 'status' => 'required',
-                ]);
+            ]);
     
             if ($validator->fails()){
                 $errors = $this->errorsArray($validator->errors()->toArray());    
                 return $this->jsonResponse([], 0, implode(",", $errors));
             }
-            $user_id = Auth::user()->id;
-            $data['created_by'] = $user_id;
-            $ticket = Ticket::create($data);
-            //$images = $this->uploadImages($request,$request->ticket_id);
 
-            if($ticket){
-                $ticketActivity = TicketActivity::create([
-                    'ticket_id' => $ticket->id,
-                    'activity_by' => Auth::id(),
-                    'message' => $request->message,
-                    'status' => $request->status,
-                    //'images'=> $images
-                ]);
-                // $this->sendTicketUpdate("newTicket", $ticket->id);
+            DB::beginTransaction();
+            try{
+                $user_id = Auth::user()->id;
+                $data['created_by'] = $user_id;
+                $ticket = Ticket::create($data);
+                $files = null;
+                if(!empty($request->files))
+                {
+                    $files = $this->uploadFiles($request);
+                }
+
+                if($ticket){
+                    $ticketActivity = TicketActivity::create([
+                        'ticket_id' => $ticket->id,
+                        'activity_by' => Auth::id(),
+                        'message' => $request->message,
+                        'status' => $request->status,
+                        'files'=> $files
+                    ]);
+                    // $this->sendTicketUpdate("newTicket", $ticket->id);
+                }
+                
+                DB::commit();
+                
+                // $this->createTrail($ticket->id, 'Ticket', 6, Auth::user()->name." Raised a new ticket(".$request->ticket_id.")!");
+                return $this->jsonResponse([], 1,"Ticket Created Successfully");
             }
-            
-            // $this->createTrail($ticket->id, 'Ticket', 6, Auth::user()->name." Raised a new ticket(".$request->ticket_id.")!");
-            return $this->jsonResponse([], 1,"Ticket Created Successfully");
+            catch (\Exception $e) {
+                DB::rollback();
+                return $this->jsonResponse($e->getMessage(), 3,"Something Went Wrong");
+            }
+
         } 
     }
 
@@ -133,10 +149,10 @@ class TicketController extends Controller
         
         //die(json_encode($request->all()));
 
-        $images = $this->uploadImages($request,$request->ticket_id);
-        //dd($images);
+        $files = $this->uploadFiles($request);
+        //dd($files);
         if($ticket){
-            $TicketActivity = FeederHelper::add($request->all(), "TicketActivity", "TicketActivity", ['status'=>$ticket->status, 'activity_by' => Auth::user()->id, 'images'=> $images], 2);
+            $TicketActivity = FeederHelper::add($request->all(), "TicketActivity", "TicketActivity", ['status'=>$ticket->status, 'activity_by' => Auth::user()->id, 'files'=> $files], 2);
             if($TicketActivity){
                 if(Auth::user()->id == $ticket->created_by){
                     $this->sendTicketUpdate("customerReply", $request->ticket_id);
@@ -189,12 +205,31 @@ class TicketController extends Controller
     }
 
 
-    public function uploadImages(Request $request, $ticket_id){
+    public function uploadFiles(Request $request){
         $path = [];
-        foreach($request->uploadImages as $img){
-            $p = $img->store('public/uploads');
-            array_push($path, Storage::url($p));
-        }   
+        $files = $request->file('files');
+        if (is_array($files))
+        {
+            foreach($files as $key => $file){
+                $p = $file->store('public/uploads');
+                $name = $file->getClientOriginalName();
+                $type = $file->getClientOriginalExtension();
+                array_push($path, [
+                    'path' => Storage::url($p),
+                    'name' => $name,
+                    'type' => $type,
+                ]);
+            }
+        } 
+        else if(is_object($files) && $request->files !== null)
+        {
+            $p = $files->store('public/uploads');
+            $type = $files->getClientOriginalExtension();
+            array_push($path, [
+                'path' => Storage::url($p),
+                'type' => $type
+            ]);
+        }
         return json_encode($path);
     }
 

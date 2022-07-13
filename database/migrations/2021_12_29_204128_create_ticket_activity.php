@@ -19,7 +19,7 @@ class CreateTicketActivity extends Migration
             $table->integer("activity_by")->nullable(); 
             
             $table->string("message")->nullable(); 
-            $table->text("images")->nullable(); // ['path1', 'path2']
+            $table->text("files")->nullable(); // ['path1', 'path2']
             
             $table->string("status")->nullable();// status at this point
             $table->softDeletes();
