@@ -21,26 +21,25 @@ class HardwareImport implements ToModel, WithStartRow
     
         public function model(array $row){
             $assig = null;
-            if($row[8] != ""){
-                $user = User::where(['name' => $row[8], 'enable' => 1])->first();
+            if($row[7] != ""){
+                $user = User::where(['email' => $row[7]])->first();
                 if($user){
                     $assig = $user->id;
                 }
             }
 
             $data =  [
-                'customID' => $row[0],
-                'device_name' => $row[1],
-                'device_number' => $row[2],
-                'brand' => $row[3],
-                'model' => $row[4],
-                'serial_number' => $row[5],
-                'floor' => $row[6],
-                'section' => $row[7],
+                'asset_name' => $row[0],
+                'unit_price' => $row[1],
+                'description' => $row[2],
+                'service_tag' => $row[3],
+                'express_service_code' => $row[4],
+                'warranty_expire_on' => $row[5],
+                'model' => $row[6],
                 'assigned_to' => $assig,
+                'assigned_on' => $row[8],
                 'status' => $row[9],
                 'location' => $row[10],
-                'notes' => $row[11],
                 'enable' => 1,
             ];
 

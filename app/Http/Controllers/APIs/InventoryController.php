@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Inventory;
 use App\Imports\HardwareImport;
 use App\Models\ErrorLog;
-use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InventoryController extends Controller
 {
@@ -114,7 +114,7 @@ class InventoryController extends Controller
 
     public function import(Request $request){
         //dd($request->all());
-        $path = $request->file->storeAs('imports', $request->file->getClientOriginalName());
+        $path = $request->file->storeAs('file', $request->file->getClientOriginalName());
         $import = new HardwareImport();
 
         Excel::import($import, $path);

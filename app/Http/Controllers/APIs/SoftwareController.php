@@ -10,9 +10,9 @@ use App\Models\ErrorLog;
 use App\Models\Software;
 use App\Models\User;
 use Carbon\Carbon;
-use Excel;
 use Exception;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SoftwareController extends Controller
 {
@@ -123,11 +123,11 @@ class SoftwareController extends Controller
 
     public function import(Request $request){
          //dd($request->all());
-         $path = $request->file->storeAs('imports', $request->file->getClientOriginalName());
+         $path = $request->file->storeAs('file', $request->file->getClientOriginalName());
          $import = new SoftwareImport();
-         $this->createTrail(0, 'Software Invenotry', 5);
- 
+         
          Excel::import($import, $path);
+         $this->createTrail(0, 'Software Invenotry', 5);
         return $this->jsonResponse([], 1,"Software Imported Successfully!");
 
     }

@@ -22,7 +22,7 @@ class SoftwareImport implements ToModel, WithStartRow
             $assig = null;
 
             if($row[3] != ""){
-                $user = User::where(['name' => $row[3], 'enable' => 1])->first();
+                $user = User::where(['email' => $row[3]])->first();
                 if($user){
                     $assig = $user->id;
                 }
