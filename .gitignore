@@ -2,7 +2,11 @@
 /public/hot
 /public/storage
 /storage/*.key
-/storage/
+/storage/fromework
+/storage/logs
+/storage/app/file
+/storage/app/imports
+/storage/app/uploads
 /vendor
 .env
 .env.backup
