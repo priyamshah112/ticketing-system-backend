@@ -3,10 +3,8 @@
 /public/storage
 /storage/*.key
 /storage/fromework
-/storage/logs
-/storage/app/file
-/storage/app/imports
-/storage/app/uploads
+/storage
+!/storage/app/public
 /vendor
 .env
 .env.backup
