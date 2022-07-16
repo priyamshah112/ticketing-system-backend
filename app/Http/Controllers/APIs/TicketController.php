@@ -128,14 +128,13 @@ class TicketController extends Controller
         // 'ticket_id',
         // 'activity_by',
         // 'message',
-        // 'images',
+        // 'files',
         // 'status',
         
         $validator =  Validator::make($request->all(), [
             'ticket_id' => 'required',
             'message' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            ]);
+        ]);
 
        
 
@@ -152,7 +151,7 @@ class TicketController extends Controller
         $files = $this->uploadFiles($request);
         //dd($files);
         if($ticket){
-            $TicketActivity = FeederHelper::add($request->all(), "TicketActivity", "TicketActivity", ['status'=>$ticket->status, 'activity_by' => Auth::user()->id, 'files'=> $files], 2);
+            return $TicketActivity = FeederHelper::add($request->all(), "TicketActivity", "TicketActivity", ['status'=>$ticket->status, 'activity_by' => Auth::user()->id, 'files'=> $files], 2);
             if($TicketActivity){
                 if(Auth::user()->id == $ticket->created_by){
                     $this->sendTicketUpdate("customerReply", $request->ticket_id);

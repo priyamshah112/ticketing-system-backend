@@ -13,7 +13,10 @@ class FeederHelper{
     public static function add($data, $model, $modelName, $extraValue = [], $Responsetype = 1){
         $model = 'App\\Models\\' .  $model;
         if($data['operation'] == "add"){            
-            
+            if(!empty($data['files']) && is_array($data['files']))
+            {
+                $data['files'] = json_encode($data['files']);
+            }
             $data = $model::create($data);
 
             foreach (array_keys($extraValue) as $key => $value) {
