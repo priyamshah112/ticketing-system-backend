@@ -34,7 +34,7 @@ class ProfileController extends Controller
         $userid = $request->user()->id;
         try{
             $validator = Validator::make($request->all(), [
-                "image_name" => "required",
+                "image_name" => "required|file|max:512",
             ]);
 
             if ($validator->fails()) {

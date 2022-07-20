@@ -335,7 +335,14 @@ class UserController extends Controller
         $data = $request->all();
         if($request->operation == "add"){
             $validator =  Validator::make($request->all(), [
+                'firstName' => 'required',
+                'lastName' => 'required',
                 'email' => 'unique:users|email|max:100',
+                'permanantAddress' => 'required',
+                'hiredAs' => 'required',
+                'startDate' => 'required',
+                'hireDate' => 'required',
+                'userType' => 'required',
              ]);
 
             if ($validator->fails()){
@@ -346,7 +353,7 @@ class UserController extends Controller
             $password =  Str::random(10);
             $data['password'] = Hash::make($password); //User::generatePassword();
             $data['enable'] = 0;
-            $data['name'] = $data['firstName'].' '.$data['middleName'].' '.$data['lastName'];
+            $data['name'] = $data['firstName'].' '.$data['lastName'];
             $user = User::create($data);
             $data['user_id'] = $user->id;
             $customer_details = CustomerDetails::create($data);

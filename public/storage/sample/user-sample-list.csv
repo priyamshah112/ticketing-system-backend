@@ -1,2 +1,2 @@
-﻿name,email,userType,hireDate,startDate,firstName,middleName,lastName,preferredName,permanantAddress,homePhone,cellPhone,title,projectName,clientName,clientLocation,workLocation,supervisorName,request,providingLaptop,hiredAs,
-test,test@gmail.com,Admin,01-01-2016,01-01-2016,Test,Mn,Ln,Tester,"mumbai, india",1234567891,1234567891,Tester,Testing,Tester1,India,USA,,,,Frontend Developer,
+﻿firstName,middleName,lastName,email,userType,hireDate,startDate,preferredName,cellPhone,homePhone,workLocation,hiredAs
+Test,Mn,Ln,test@gmail.com,Admin,2016-01-01,2016-01-01,Test,1234567891,1234567891,USA,1099
