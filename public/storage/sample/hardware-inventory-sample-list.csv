@@ -1,4 +1,0 @@
-﻿asset_name,unit_price,model,service_tag,express_service_code,warranty_expire_on,user_email,assigned_on,status,location,description
-Laptop,2,MD01,ST32,1232,2022-06-10,test@gmail.com,2022-06-08,Not Available,Costa Rica,None
-Laptop,2,MD01,ST32,1232,2022-06-10,,2022-06-08,Available,USA,None
-Laptop,2,MD01,ST32,1232,2022-06-10,test@gmail.com,2022-06-08,Not Available,India,None

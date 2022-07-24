@@ -8,6 +8,8 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use App\Models\Software;
 use App\Models\User;
+use Carbon\Carbon;
+use Mockery\Undefined;
 
 class SoftwareImport implements ToModel, WithStartRow
 {
@@ -19,35 +21,39 @@ class SoftwareImport implements ToModel, WithStartRow
     
     
         public function model(array $row){
-            $assig = null;
-
-            if($row[3] != ""){
-                $user = User::where(['email' => $row[3]])->first();
-                if($user){
-                    $assig = $user->id;
+            if(isset($row[1]) && $row[1] !== "")
+            {
+                $assig = null;
+                
+                if(isset($row[4]) && $row[4] != ""){
+                    $user = User::where(['email' => $row[4]])->first();
+                    if($user){
+                        $assig = $user->id;
+                    }
                 }
+    
+                $data =  [
+                    'name' => $row[1],
+                    'version' => $row[2],
+                    'key' => $row[3],
+                    'assigned_to' => $assig,
+                    'assigned_on' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[5])),
+                    'expiry_date' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[6])),
+                    'status' => $row[7],
+                    'notes' => $row[8],
+                    'enable' => 1,
+                ];
+    
+                    //dd($data);
+                    $add = 0;
+                    foreach($data as $key => $value) {
+                        if($value)
+                            $add = 1;
+                    }
+                    if($add)
+                        $inventory = Software::create($data); 
+
             }
-
-            $data =  [
-                'name' => $row[0],
-                'version' => $row[1],
-                'key' => $row[2],
-                'assigned_to' => $assig,
-                'assigned_on' => $row[4],
-                'expiry_date' =>$row[5],
-                'status' => $row[6],
-                'notes' => $row[7],
-                'enable' => 1,
-            ];
-
-                //dd($data);
-                $add = 0;
-                foreach($data as $key => $value) {
-                    if($value)
-                        $add = 1;
-                }
-                if($add)
-                    $inventory = Software::create($data); 
              return null;
         }
 

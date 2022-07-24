@@ -123,10 +123,9 @@ class SoftwareController extends Controller
 
     public function import(Request $request){
          //dd($request->all());
-         $path = $request->file->storeAs('file', $request->file->getClientOriginalName());
+         $path = $request->file('file')->store('imports');
          $import = new SoftwareImport();
-         
-         Excel::import($import, $path);
+         Excel::import($import, $path, null, \Maatwebsite\Excel\Excel::XLSX);
          $this->createTrail(0, 'Software Invenotry', 5);
         return $this->jsonResponse([], 1,"Software Imported Successfully!");
 
