@@ -8,8 +8,10 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Mail;
 use App\Models\AuditTrail;
+use app\Utils\ResponseUtil;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Response;
 
 class Controller extends BaseController
 {
@@ -239,4 +241,43 @@ class Controller extends BaseController
 
         return $viewData;
     }
+
+    public function sendResponse($result, $message)
+    {
+        return Response::json(ResponseUtil::makeResponse($message, $result));
+    }
+
+    public function sendError($error, $code = 404)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
+
+    public function sendValidationError($error, $code = 422)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
+
+    public function sendAccessDenied($error, $code = 403)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
+
+    public function sendSuccess($message)
+    {
+        return Response::json([
+            'success' => true,
+            'message' => $message,
+        ], 200);
+    }
+
+    public function sendExpired($error, $code = 410)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
+
+    public function sendErrorWithCode($error, $code)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
 }
+

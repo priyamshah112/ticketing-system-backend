@@ -80,8 +80,14 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post("/software/inventory/import",[App\Http\Controllers\APIs\SoftwareController::class, 'import']);
 
     Route::get("/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'index']);
+    Route::get("/dashboard/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'dashboard']);
     Route::post("/faq/add",[App\Http\Controllers\APIs\FAQsController::class, 'add']);
-    Route::post("/faq/delete",[App\Http\Controllers\APIs\FAQsController::class, 'distroy']);
+    Route::post("/faq/delete",[App\Http\Controllers\APIs\FAQsController::class, 'destroy']);
+    
+    Route::get("/UI",[App\Http\Controllers\APIs\UIController::class, 'index']);
+    Route::get("/dashboard/UI",[App\Http\Controllers\APIs\UIController::class, 'dashboard']);
+    Route::post("/UI/add",[App\Http\Controllers\APIs\UIController::class, 'add']);
+    Route::post("/UI/delete",[App\Http\Controllers\APIs\UIController::class, 'destroy']);
 
     Route::get('user-details', [ProfileController::class, 'viewProfile']);
     Route::post('/profile/update', [ProfileController::class, 'updateProfile']);

@@ -485,7 +485,7 @@ class UserController extends Controller
                 if(!empty($inventory->first())){
                     $inventory->update([
                         'assigned_to'=>null,
-                        'status'=>"Not Available"
+                        'status'=>"Available"
                     ]);
                 }
             }

@@ -14,6 +14,7 @@ class Inventory extends Model
     protected $fillable = [
         'asset_name',
         'device_name',
+        'hardware_type',
         'unit_price',
         'description',
         'device_number',

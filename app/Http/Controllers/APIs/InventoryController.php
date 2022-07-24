@@ -16,6 +16,8 @@ class InventoryController extends Controller
 
         $inventory->when(isset($request->asset_name), function($q) use($request){
             $q->where('asset_name', 'like', '%'.$request->asset_name.'%');
+        })->when(isset($request->hardware_type), function($q) use($request){
+            $q->where('hardware_type', 'like', '%'.$request->hardware_type.'%');
         })->when(isset($request->model), function($q) use($request){
             $q->where('model', 'like', '%'.$request->model.'%');
         })->when(isset($request->service_tag), function($q) use($request){

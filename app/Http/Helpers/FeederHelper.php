@@ -36,13 +36,13 @@ class FeederHelper{
             
             if($data) {
                 foreach (array_keys($data->toArray()) as $key => $value) {
-                    if($data->has($value)){
+                    if(!empty($value)){
                         $data->$value = $data[$value];                
                     }
                 }                
                 
                 foreach (array_keys($extraValue) as $key => $value) {
-                    if($extraValue[$value] != -9999)
+                    if(!empty($extraValue[$value]))
                         $data->$value = $extraValue[$value];                
                 }
                 $data->save();
