@@ -28,7 +28,9 @@ Route::group(['prefix' => 'v1'], function(){
 
 });
 
-Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
+Route::group([
+    // 'middleware' => 'auth:api',
+     'prefix' => 'v1'], function(){
     //Roles
     Route::post('/change-password', [App\Http\Controllers\APIs\UserController::class, 'changePassword']);
 
@@ -83,7 +85,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::get("/dashboard/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'dashboard']);
     Route::post("/faq/add",[App\Http\Controllers\APIs\FAQsController::class, 'add']);
     Route::post("/faq/delete",[App\Http\Controllers\APIs\FAQsController::class, 'destroy']);
-    
+
     Route::get("/UI",[App\Http\Controllers\APIs\UIController::class, 'index']);
     Route::get("/dashboard/UI",[App\Http\Controllers\APIs\UIController::class, 'dashboard']);
     Route::post("/UI/add",[App\Http\Controllers\APIs\UIController::class, 'add']);

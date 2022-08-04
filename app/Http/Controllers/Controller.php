@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use Mail;
-use App\Models\AuditTrail;
-use app\Utils\ResponseUtil;
 use Auth;
 use Carbon\Carbon;
+use App\Models\AuditTrail;
+use app\Utils\ResponseUtil;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
@@ -28,13 +28,15 @@ class Controller extends BaseController
         //array_walk($this->to, create_function('&$val', '$val = trim($val);'));
         $this->to = array_filter(array_map('trim',explode(",", $this->data['to'])));
 
-        Mail::send(['html'=>$data['view']], ['data' => $data['data']], function($message){
-            $message->to($this->to)->subject($this->data['subject']);
-            $message->from('zeemzachdev@gmail.com', 'Ticketing System');
-        });
+
+        // Mail::send(['html'=>$data['view']], ['data' => $data['data']], function($message){
+        //     $message->to($this->to)->subject($this->data['subject']);
+        //     $message->from('zeemzachdev@gmail.com', 'Ticketing System');
+        // });
+        Mail::
          // check for failures
+         dd($this->to);
         if (Mail::failures()) {
-            // dd($this->to);
             // return response showing failed emails
             return "Failed to send Mail";
         }
