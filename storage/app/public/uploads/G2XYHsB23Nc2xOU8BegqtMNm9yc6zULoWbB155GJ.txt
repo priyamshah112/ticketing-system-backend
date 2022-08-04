@@ -1,0 +1,2 @@
+﻿Preferred Name,email,User Type,Hire Date,Start Date,First Name,Middle Name,Last Name,Permanant Address,Home Phone,Cell Phone,Title,Project Name,Client Name,Client Location,Work Location,Supervisor Name,Providing Laptop,Hired As,Status,,,
+Devashish,dev1@yopmail.com,Admin,01/25/2022,01/25/2022,Dev,Ashish,Joshi,"Ahmedabad, Gujarat, India",1111111111,9999999999,Tester,Testing,Tester1,India,USA,,,Frontend Developer,Active,,,

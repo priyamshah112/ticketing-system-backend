@@ -13,7 +13,10 @@ class FeederHelper{
     public static function add($data, $model, $modelName, $extraValue = [], $Responsetype = 1){
         $model = 'App\\Models\\' .  $model;
         if($data['operation'] == "add"){            
-            
+            if(!empty($data['files']) && is_array($data['files']))
+            {
+                $data['files'] = json_encode($data['files']);
+            }
             $data = $model::create($data);
 
             foreach (array_keys($extraValue) as $key => $value) {
@@ -33,13 +36,13 @@ class FeederHelper{
             
             if($data) {
                 foreach (array_keys($data->toArray()) as $key => $value) {
-                    if($data->has($value)){
+                    if(!empty($value)){
                         $data->$value = $data[$value];                
                     }
                 }                
                 
                 foreach (array_keys($extraValue) as $key => $value) {
-                    if($extraValue[$value] != -9999)
+                    if(!empty($extraValue[$value]))
                         $data->$value = $extraValue[$value];                
                 }
                 $data->save();

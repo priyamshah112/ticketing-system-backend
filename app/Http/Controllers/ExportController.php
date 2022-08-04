@@ -179,28 +179,27 @@ class ExportController extends Controller
     // }
 
     public function exportUserSample(){
-        $path = storage_path('app/' . 'Import User Sample.csv');
-        return response()->download($path, 'User Import Sample.csv', [
+        $path = public_path('storage/sample/user-sample-list.xlsx');
+        return response()->download($path, 'user-sample-list.xlsx', [
             'Content-Type' => 'application/vnd.ms-excel',
-            'Content-Disposition' => 'inline; filename="' . 'User Import Sample.csv' . '"'
+            'Content-Disposition' => 'inline; filename="' . 'user-sample-list.xlsx' . '"'
         ]);
     }
 
     public function exportSoftwareSample(){
-        $unique=uniqid();
-        $path = storage_path("app/" . "Import User Sample {$unique}.csv");
-        return response()->download($path, 'sample.csv', [
+        $path = public_path('storage/sample/software-inventory-sample-list.xlsx');
+        return response()->download($path, 'software-inventory-sample-list.xlsx', [
             'Content-Type' => 'application/vnd.ms-excel',
-            'Content-Disposition' => 'inline; filename="' . 'sample.csv' . '"'
+            'Content-Disposition' => 'inline; filename="' . 'software-inventory-sample-list.xlsx' . '"'
         ]);
     }
 
 
     public function exportHardwareSample(){
-        $path = storage_path('app/' . 'Import User Sample.csv');
-        return response()->download($path, 'sample.csv', [
+        $path = public_path('storage/sample/hardware-inventory-sample-list.xlsx');
+        return response()->download($path, 'hardware-inventory-sample-list.xlsx', [
             'Content-Type' => 'application/vnd.ms-excel',
-            'Content-Disposition' => 'inline; filename="' . 'sample.csv' . '"'
+            'Content-Disposition' => 'inline; filename="' . 'hardware-inventory-sample-list.xlsx' . '"'
         ]);
     }
 

@@ -18,7 +18,7 @@ Route::group(['prefix' => 'v1'], function(){
         return "Welcome To Ticketing System Api Library";
     });
     Route::post("/login",[App\Http\Controllers\APIs\AuthController::class, 'login']);
-    Route::post("/reset",[App\Http\Controllers\APIs\AuthController::class, 'reset']);
+    Route::post("/reset-password",[App\Http\Controllers\APIs\AuthController::class, 'reset_password']);
     Route::post('/forgot-password', [App\Http\Controllers\APIs\AuthController::class, 'forgot_password']);
 
     // Exports
@@ -28,7 +28,9 @@ Route::group(['prefix' => 'v1'], function(){
 
 });
 
-Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
+Route::group([
+    // 'middleware' => 'auth:api',
+     'prefix' => 'v1'], function(){
     //Roles
     Route::post('/change-password', [App\Http\Controllers\APIs\UserController::class, 'changePassword']);
 
@@ -80,11 +82,17 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function(){
     Route::post("/software/inventory/import",[App\Http\Controllers\APIs\SoftwareController::class, 'import']);
 
     Route::get("/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'index']);
+    Route::get("/dashboard/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'dashboard']);
     Route::post("/faq/add",[App\Http\Controllers\APIs\FAQsController::class, 'add']);
-    Route::post("/faq/delete",[App\Http\Controllers\APIs\FAQsController::class, 'distroy']);
+    Route::post("/faq/delete",[App\Http\Controllers\APIs\FAQsController::class, 'destroy']);
 
-    Route::post('view-profile', [ProfileController::class, 'viewProfile']);
-    Route::post('update-profile', [ProfileController::class, 'updateProfile']);
+    Route::get("/UI",[App\Http\Controllers\APIs\UIController::class, 'index']);
+    Route::get("/dashboard/UI",[App\Http\Controllers\APIs\UIController::class, 'dashboard']);
+    Route::post("/UI/add",[App\Http\Controllers\APIs\UIController::class, 'add']);
+    Route::post("/UI/delete",[App\Http\Controllers\APIs\UIController::class, 'destroy']);
+
+    Route::get('user-details', [ProfileController::class, 'viewProfile']);
+    Route::post('/profile/update', [ProfileController::class, 'updateProfile']);
 
 
 

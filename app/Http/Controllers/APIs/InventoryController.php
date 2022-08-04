@@ -5,19 +5,19 @@ namespace App\Http\Controllers\APIs;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Inventory;
-use App\Models\User;
-use App\Http\Helpers\FeederHelper;
 use App\Imports\HardwareImport;
 use App\Models\ErrorLog;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InventoryController extends Controller
 {
     public function index(Request $request, $type){
-        $inventory = Inventory::with('user')->where("type", $type);
+        $inventory = Inventory::with('user');
 
         $inventory->when(isset($request->asset_name), function($q) use($request){
             $q->where('asset_name', 'like', '%'.$request->asset_name.'%');
+        })->when(isset($request->hardware_type), function($q) use($request){
+            $q->where('hardware_type', 'like', '%'.$request->hardware_type.'%');
         })->when(isset($request->model), function($q) use($request){
             $q->where('model', 'like', '%'.$request->model.'%');
         })->when(isset($request->service_tag), function($q) use($request){
@@ -43,21 +43,21 @@ class InventoryController extends Controller
             $inventory = $this->dateFilter($inventory, 'warranty_expire_on', $request->warranty_expire_on);
         }
         
-        $devices = $this->collection2Array(Inventory::select('device_name')->where("enable", 1)->groupBy('device_name')->where("type", $type)->get(), "device_name");
-        $brand = $this->collection2Array(Inventory::select('brand')->where("enable", 1)->groupBy('brand')->where("type", $type)->get(), "brand");
-        $floor = $this->collection2Array(Inventory::select('floor')->where("enable", 1)->groupBy('floor')->where("type", $type)->get(), "floor");
-        $section = $this->collection2Array(Inventory::select('section')->where("enable", 1)->groupBy('section')->where("type", $type)->get(), "section");
-        $location = $this->collection2Array(Inventory::select('location')->where("enable", 1)->groupBy('location')->where("type", $type)->get(), "location");
-        $users = User::select('id','name','email')->where("enable", 1)->get();
+        // $devices = $this->collection2Array(Inventory::select('device_name')->where("enable", 1)->groupBy('device_name')->where("type", $type)->get(), "device_name");
+        // $brand = $this->collection2Array(Inventory::select('brand')->where("enable", 1)->groupBy('brand')->where("type", $type)->get(), "brand");
+        // $floor = $this->collection2Array(Inventory::select('floor')->where("enable", 1)->groupBy('floor')->where("type", $type)->get(), "floor");
+        // $section = $this->collection2Array(Inventory::select('section')->where("enable", 1)->groupBy('section')->where("type", $type)->get(), "section");
+        // $location = $this->collection2Array(Inventory::select('location')->where("enable", 1)->groupBy('location')->where("type", $type)->get(), "location");
+        // $users = User::select('id','name','email')->where("enable", 1)->get();
         //dd();
 
         return $this->jsonResponse(['inventory'=>$inventory, 
-                                    'devices' => $devices, 
-                                    'brands'=>$brand, 
-                                    'floor' => $floor,
-                                    'section'=>$section,
-                                    'users'=>$users,
-                                    'locations' => $location,
+                                    // 'devices' => $devices, 
+                                    // 'brands'=>$brand, 
+                                    // 'floor' => $floor,
+                                    // 'section'=>$section,
+                                    // 'users'=>$users,
+                                    // 'locations' => $location,
                                     'exportUrl' => route('exportInventory'),
                                     'sampleImport' => route('exportHardwareSample')
                                 ], 1);
@@ -116,7 +116,7 @@ class InventoryController extends Controller
 
     public function import(Request $request){
         //dd($request->all());
-        $path = $request->file->storeAs('imports', $request->file->getClientOriginalName());
+        $path = $request->file->storeAs('file', $request->file->getClientOriginalName());
         $import = new HardwareImport();
 
         Excel::import($import, $path);

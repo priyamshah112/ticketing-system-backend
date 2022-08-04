@@ -19,6 +19,7 @@ class CreateInventoryTable extends Migration
         Schema::create('inventory', function (Blueprint $table) {
             $table->id();
             $table->string('asset_name')->nullable();
+            $table->string('hardware_type')->nullable();
             $table->string('customID', 10)->nullable();
             $table->string("device_name")->nullable();
             $table->string("device_number")->nullable();

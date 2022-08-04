@@ -48,14 +48,13 @@ class AuthController extends BaseController
         }
     }
 
-    public function reset(Request $request)
+    public function reset_password(Request $request)
     {
         //$request->validate($this->rules(), $this->validationErrorMessages());
 
 
         $validator = Validator::make($request->all(), [
             'token' => ['required', 'max:255'],
-            'email' => ['required', 'email', 'max:255' ],
             'password' => ['required', 'min:8'],
         ]);
 
@@ -68,6 +67,7 @@ class AuthController extends BaseController
             return $this->jsonResponse([], 0, implode(",", $errors));
         }
 
+        
         $entry =  DB::select("SELECT * FROM `password_resets` where email = '". $request->email . "' and token = '".$request->token."'");
         //dd($entry);
         if($entry){
@@ -121,7 +121,7 @@ class AuthController extends BaseController
                 if($user){
                     $data['user'] = $user;
                     $token = User::getToken($user);
-                    $data['resetLink'] = 'http://'.$request->url.'/user/resetpassword?token='.$token.'&email='.$user->email;
+                    $data['resetLink'] = 'http://'.$request->url.'/reset-password?token='.$token.'&email='.$user->email;
                     $data['baseURL'] = URL::to('/');
                     $data = array(
                         'view' => 'mails.forgetPasswordRequest',

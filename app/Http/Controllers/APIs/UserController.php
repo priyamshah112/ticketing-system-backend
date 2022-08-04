@@ -335,7 +335,14 @@ class UserController extends Controller
         $data = $request->all();
         if($request->operation == "add"){
             $validator =  Validator::make($request->all(), [
+                'firstName' => 'required',
+                'lastName' => 'required',
                 'email' => 'unique:users|email|max:100',
+                'permanantAddress' => 'required',
+                'hiredAs' => 'required',
+                'startDate' => 'required',
+                'hireDate' => 'required',
+                'userType' => 'required',
              ]);
 
             if ($validator->fails()){
@@ -346,7 +353,7 @@ class UserController extends Controller
             $password =  Str::random(10);
             $data['password'] = Hash::make($password); //User::generatePassword();
             $data['enable'] = 0;
-            $data['name'] = $data['firstName'].' '.$data['middleName'].' '.$data['lastName'];
+            $data['name'] = $data['firstName'].' '.$data['lastName'];
             $user = User::create($data);
             $data['user_id'] = $user->id;
             $customer_details = CustomerDetails::create($data);
@@ -478,7 +485,7 @@ class UserController extends Controller
                 if(!empty($inventory->first())){
                     $inventory->update([
                         'assigned_to'=>null,
-                        'status'=>"Not Available"
+                        'status'=>"Available"
                     ]);
                 }
             }
@@ -541,17 +548,17 @@ class UserController extends Controller
         $this->createTrail(0, 'User', 5);
         $lines = [];
         $selectedPeriod = [];
-        if(sizeof($import->entries) > 0){
+        // if(sizeof($import->entries) > 0){
 
-            $headings = $import->heading;
-            $p = 'Pending Entries-'.Carbon::now()->format('m-d-y H:i').'.xlsx';
+        //     $headings = $import->heading;
+        //     $p = 'Pending Entries-'.Carbon::now()->format('m-d-y H:i').'.xlsx';
             // print_r($import);
             // exit();
-            $path =  Excel::store(new UserExport($import->entries, [], [], $headings, ''), $p);
-            $p =  route("downloadErrorExcel", ['file' => $p]);
-            // return $this->jsonResponse(['filePath' => $p], 0,"Some entries failed while import!");
+        //     $path =  Excel::store(new UserExport($import->entries, [], [], $headings, ''), $p);
+        //     $p =  route("downloadErrorExcel", ['file' => $p]);
+        //     return $this->jsonResponse(['filePath' => $p], 0,"Some entries failed while import!");
 
-        }
+        // }
         return $this->jsonResponse([], 1,"Users Imported Successfully!");
     }
 

@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use App\Models\Inventory;
 use App\Models\User;
+use Carbon\Carbon;
 
 class HardwareImport implements ToModel, WithStartRow
 {
@@ -20,28 +21,31 @@ class HardwareImport implements ToModel, WithStartRow
     
     
         public function model(array $row){
-            $assig = null;
-            if($row[8] != ""){
-                $user = User::where(['name' => $row[8], 'enable' => 1])->first();
-                if($user){
-                    $assig = $user->id;
+            if(isset($row[1]) && $row[1] !== "" && isset($row[11]) && $row[11] !== "" )
+            {
+                $assig = null;
+                if(isset($row[8]) && $row[8] != ""){
+                    $user = User::where(['email' => $row[8]])->first();
+                    if($user){
+                        $assig = $user->id;
+                    }
                 }
-            }
 
-            $data =  ['customID' => $row[0],
-                'device_name' => $row[1],
-                'device_number' => $row[2],
-                'brand' => $row[3],
-                'model' => $row[4],
-                'serial_number' => $row[5],
-                'floor' => $row[6],
-                'section' => $row[7],
-                'assigned_to' => $assig,
-                'status' => $row[9],
-                'location' => $row[10],
-                'notes' => $row[11],
-                'enable' => 1,
-            ];
+                $data =  [
+                    'asset_name' => isset($row[1]) ? $row[1] : null,
+                    'hardware_type' => isset($row[2]) ? $row[2] : null,
+                    'unit_price' => isset($row[3]) ? $row[3] : null,
+                    'model' => isset($row[4]) ? $row[4] : null,
+                    'service_tag' => isset($row[5]) ? $row[5] : null,
+                    'express_service_code' => isset($row[6]) ? $row[6] : null,
+                    'warranty_expire_on' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[7])),
+                    'assigned_to' => $assig,
+                    'assigned_on' => Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[9])),
+                    'status' => isset($row[10]) ? $row[10] : null,
+                    'location' => isset($row[11]) ? $row[11] : null,
+                    'description' => isset($row[12]) ? $row[12] : null,
+                    'enable' => 1,
+                ];
 
                 //dd($data);
                 $add = 0;
@@ -52,7 +56,8 @@ class HardwareImport implements ToModel, WithStartRow
                 }
                 if($add)
                     $inventory = Inventory::create($data); 
-             return null;
+                }
+                return null;
         }
 
         public function startRow(): int{

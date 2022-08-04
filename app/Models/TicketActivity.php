@@ -14,7 +14,7 @@ class TicketActivity extends Model
         'ticket_id',
         'activity_by',
         'message',
-        'images',
+        'files',
         'status',
     ];
 }

@@ -34,7 +34,7 @@ class ProfileController extends Controller
         $userid = $request->user()->id;
         try{
             $validator = Validator::make($request->all(), [
-                "image_name" => "required",
+                "image_name" => "required|file|max:512",
             ]);
 
             if ($validator->fails()) {
@@ -51,8 +51,7 @@ class ProfileController extends Controller
             {
                 $photoExtention = $image->getClientOriginalExtension();
                 $photo_name = $now.'.'.$photoExtention;
-                $photopath = public_path('image');
-                $image->move($photopath, $photo_name);
+                $image->storeAs('/public/image', $photo_name);
             }
             else
             {

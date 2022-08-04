@@ -10,9 +10,9 @@ use App\Models\ErrorLog;
 use App\Models\Software;
 use App\Models\User;
 use Carbon\Carbon;
-use Excel;
 use Exception;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SoftwareController extends Controller
 {
@@ -84,7 +84,7 @@ class SoftwareController extends Controller
             $data['assigned_on'] = Carbon::now()->toDateString();
         }
         if($request->expiry_date != ""){
-            $data['expiry_date'] =  Carbon::createFromFormat('d/m/Y', $request->expiry_date)->format("Y-m-d");
+            $data['expiry_date'] =  Carbon::parse($request->expiry_date)->format("Y-m-d");
         }
 
         $inventory = Software::updateOrCreate([
@@ -123,11 +123,10 @@ class SoftwareController extends Controller
 
     public function import(Request $request){
          //dd($request->all());
-         $path = $request->file->storeAs('imports', $request->file->getClientOriginalName());
+         $path = $request->file('file')->store('imports');
          $import = new SoftwareImport();
+         Excel::import($import, $path, null, \Maatwebsite\Excel\Excel::XLSX);
          $this->createTrail(0, 'Software Invenotry', 5);
- 
-         Excel::import($import, $path);
         return $this->jsonResponse([], 1,"Software Imported Successfully!");
 
     }

@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use Mail;
-use App\Models\AuditTrail;
 use Auth;
 use Carbon\Carbon;
+use App\Models\AuditTrail;
+use app\Utils\ResponseUtil;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
@@ -26,13 +28,15 @@ class Controller extends BaseController
         //array_walk($this->to, create_function('&$val', '$val = trim($val);'));
         $this->to = array_filter(array_map('trim',explode(",", $this->data['to'])));
 
-        Mail::send(['html'=>$data['view']], ['data' => $data['data']], function($message){
-            $message->to($this->to)->subject($this->data['subject']);
-            $message->from('zeemzachdev@gmail.com', 'Ticketing System');
-        });
+
+        // Mail::send(['html'=>$data['view']], ['data' => $data['data']], function($message){
+        //     $message->to($this->to)->subject($this->data['subject']);
+        //     $message->from('zeemzachdev@gmail.com', 'Ticketing System');
+        // });
+        Mail::
          // check for failures
+         dd($this->to);
         if (Mail::failures()) {
-            // dd($this->to);
             // return response showing failed emails
             return "Failed to send Mail";
         }
@@ -67,6 +71,14 @@ class Controller extends BaseController
             [
                 'success' => false,
                 'status_code' => 301,
+                'message' => $msg
+            ], 400);
+        }
+        else if($status == 3){
+            return response()->json(
+            [
+                'success' => false,
+                'status_code' => 500,
                 'message' => $msg
             ], 400);
         }
@@ -231,4 +243,43 @@ class Controller extends BaseController
 
         return $viewData;
     }
+
+    public function sendResponse($result, $message)
+    {
+        return Response::json(ResponseUtil::makeResponse($message, $result));
+    }
+
+    public function sendError($error, $code = 404)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
+
+    public function sendValidationError($error, $code = 422)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
+
+    public function sendAccessDenied($error, $code = 403)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
+
+    public function sendSuccess($message)
+    {
+        return Response::json([
+            'success' => true,
+            'message' => $message,
+        ], 200);
+    }
+
+    public function sendExpired($error, $code = 410)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
+
+    public function sendErrorWithCode($error, $code)
+    {
+        return Response::json(ResponseUtil::makeError($error), $code);
+    }
 }
+
