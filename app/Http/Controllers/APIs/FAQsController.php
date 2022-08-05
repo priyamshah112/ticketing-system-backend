@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\FAQs;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\FeederHelper;
+<<<<<<< HEAD
+=======
 use Carbon\Carbon;
+>>>>>>> main
 
 class FAQsController extends Controller
 {

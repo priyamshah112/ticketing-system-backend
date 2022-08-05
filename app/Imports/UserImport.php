@@ -31,25 +31,25 @@ class UserImport implements ToCollection, WithHeadingRow
                 if($user){
                     $row['errors'] = "Email id is already in use!";
                     array_push($this->entries, $row);
-    
+
                 }else{
-    
+
                     $data['email'] = $this->checkExistOrNot($row,'email');
-    
-    
+
+
                     $validator = Validator::make($data, [
                         'email'=>'required|email:rfc,dns'
                     ]);
-    
-    
-    
+
+
+
                     if ($validator->fails()){
                         $errors = $this->errorsArray($validator->errors()->toArray());
                         $row['errors'] = implode(",", $errors);
                         array_push($this->entries, $row);
                     }
-    
-    
+
+
                     $user = User::create([
                         'name' => $this->checkExistOrNot($row,'first_name'),
                         'email' => $this->checkExistOrNot($row,'email'),
@@ -58,15 +58,15 @@ class UserImport implements ToCollection, WithHeadingRow
                         'role_id' => 0,
                         'enable' => 0
                     ]);
-    
-    
+
+
                     $data['name'] = $user->name;
                     $data['user_id'] = $user->id;
                     $data['user'] = $user;
                     $data['resetLink'] = ''; // $request->url;
                     $data['password'] = $password;
                     $data['baseURL'] = URL::to('/');
-    
+
                     $data['hireDate'] = $this->checkExistOrNot($row,'hire_date');
                     $data['startDate'] = $this->checkExistOrNot($row,'start_date');
                     $data['firstName'] = $this->checkExistOrNot($row,'first_name');
@@ -85,9 +85,9 @@ class UserImport implements ToCollection, WithHeadingRow
                     $data['request'] = $this->checkExistOrNot($row,'request');
                     $data['providingLaptop'] = $this->checkExistOrNot($row,'providingLaptop');
                     $data['hiredAs'] = $this->checkExistOrNot($row,'hired_as');
-    
+
                     $customer_details = CustomerDetails::create($data);
-    
+
                     $data = array(
                         'view' => 'mails.welcome',
                         'subject' => 'Welcome to RX!',
@@ -95,10 +95,10 @@ class UserImport implements ToCollection, WithHeadingRow
                         'reciever' => 'To '.$user->name,
                         'data' => $data
                     );
-    
+
                     $this->sendMail($data);
                 }
-                
+
             }
         });
     }
