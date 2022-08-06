@@ -22,27 +22,30 @@ class TicketController extends Controller
 {
     public function index(Request $request){
         $user = Auth::user();
+        $tickets=[];
         $tickets = Ticket::with('ticketActivity')->with("user", "support");
-
-        switch($user->userType){
-            case "Support":
-                $tickets = $tickets->where("assigned_to", $user->id);
-                break;
-            case "User":
-                $tickets = $tickets->where("created_by", $user->id);
-                break;
-            case "Staff":
-                $tickets = $tickets->where("created_by", $user->id)->orWhere("assigned_to", $user->id);
-                break;
+        if($user->userType){
+            switch($user->userType){
+                case "Support":
+                    $tickets = $tickets->where("assigned_to", $user->id);
+                    break;
+                case "User":
+                    $tickets = $tickets->where("created_by", $user->id);
+                    break;
+                case "Staff":
+                    $tickets = $tickets->where("created_by", $user->id)->orWhere("assigned_to", $user->id);
+                    break;
+            }
         }
 
-        $tickets = $tickets->when(isset($request->status), function($q) use($request){
-            $q->where('status', $request->status);
-        })->when(isset($request->subject), function($q) use($request){
-            $q->where('subject', 'like', '%'.$request->subject.'%');
-        })->when(isset($request->assigned_to), function($q) use($request){
-            $q->where('assigned_to', $request->assigned_to);
-        })->get();
+        $tickets = $tickets
+            ->when(isset($request->status), function($q) use($request){
+                $q->where('status', $request->status);
+            })->when(isset($request->subject), function($q) use($request){
+                $q->where('subject', 'like', '%'.$request->subject.'%');
+            })->when(isset($request->assigned_to), function($q) use($request){
+                $q->where('assigned_to', $request->assigned_to);
+            })->get();
 
         if(isset($request->created_at))
         {
@@ -76,8 +79,8 @@ class TicketController extends Controller
 
             // DB::beginTransaction();
             try{
-                // $user_id = Auth::user()->id;
-                $user_id = 1;
+                $user_id = Auth::user()->id;
+                // $user_id = 1;
 
                 $data['created_by'] = $user_id;
                 $ticket = Ticket::create($data);
@@ -297,7 +300,7 @@ class TicketController extends Controller
                     $data['subject'] = 'You have one message for Support on Your Ticket!';
                     $data['view']='mails.newTicket';
                     Mail::to($ticket->user->email)->send(new \App\Mail\TicketCreatedMail($data));
-                    $data['subject'] = 'You have one Ticket Created!';
+                    $data['subject'] = 'You have One Ticket Created!';
                     $data['view']='mails.newTicket_admin';
                     Mail::to($user_admin)->send(new \App\Mail\TicketCreatedMail($data));
 

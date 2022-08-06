@@ -29,7 +29,7 @@ Route::group(['prefix' => 'v1'], function(){
 });
 
 Route::group([
-    // 'middleware' => 'auth:api',
+    'middleware' => 'auth:api',
      'prefix' => 'v1'], function(){
     //Roles
     Route::post('/change-password', [App\Http\Controllers\APIs\UserController::class, 'changePassword']);
