@@ -22,27 +22,30 @@ class TicketController extends Controller
 {
     public function index(Request $request){
         $user = Auth::user();
+        $tickets=[];
         $tickets = Ticket::with('ticketActivity')->with("user", "support");
-
-        switch($user->userType){
-            case "Support":
-                $tickets = $tickets->where("assigned_to", $user->id);
-                break;
-            case "User":
-                $tickets = $tickets->where("created_by", $user->id);
-                break;
-            case "Staff":
-                $tickets = $tickets->where("created_by", $user->id)->orWhere("assigned_to", $user->id);
-                break;
+        if($user->userType){
+            switch($user->userType){
+                case "Support":
+                    $tickets = $tickets->where("assigned_to", $user->id);
+                    break;
+                case "User":
+                    $tickets = $tickets->where("created_by", $user->id);
+                    break;
+                case "Staff":
+                    $tickets = $tickets->where("created_by", $user->id)->orWhere("assigned_to", $user->id);
+                    break;
+            }
         }
 
-        $tickets = $tickets->when(isset($request->status), function($q) use($request){
-            $q->where('status', $request->status);
-        })->when(isset($request->subject), function($q) use($request){
-            $q->where('subject', 'like', '%'.$request->subject.'%');
-        })->when(isset($request->assigned_to), function($q) use($request){
-            $q->where('assigned_to', $request->assigned_to);
-        })->get();
+        $tickets = $tickets
+            ->when(isset($request->status), function($q) use($request){
+                $q->where('status', $request->status);
+            })->when(isset($request->subject), function($q) use($request){
+                $q->where('subject', 'like', '%'.$request->subject.'%');
+            })->when(isset($request->assigned_to), function($q) use($request){
+                $q->where('assigned_to', $request->assigned_to);
+            })->get();
 
         if(isset($request->created_at))
         {
