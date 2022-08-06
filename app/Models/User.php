@@ -1,7 +1,7 @@
 <?php
-  
+
 namespace App\Models;
-  
+
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
-  
+
     /**
      * The attributes that are mass assignable.
      *
@@ -26,9 +26,10 @@ class User extends Authenticatable
         'password',
         'role_id',
         'userType',
-        'enable'
+        'enable',
+        'userType'
     ];
-  
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -38,7 +39,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-  
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -54,7 +55,7 @@ class User extends Authenticatable
 
     public static function generatePassword()
     {
-      // Generate random string and encrypt it. 
+      // Generate random string and encrypt it.
       return bcrypt(Str::random(35));
     }
     public static function getToken($user)
