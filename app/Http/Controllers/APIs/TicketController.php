@@ -76,8 +76,8 @@ class TicketController extends Controller
 
             // DB::beginTransaction();
             try{
-                // $user_id = Auth::user()->id;
-                $user_id = 1;
+                $user_id = Auth::user()->id;
+                // $user_id = 1;
 
                 $data['created_by'] = $user_id;
                 $ticket = Ticket::create($data);
@@ -297,7 +297,7 @@ class TicketController extends Controller
                     $data['subject'] = 'You have one message for Support on Your Ticket!';
                     $data['view']='mails.newTicket';
                     Mail::to($ticket->user->email)->send(new \App\Mail\TicketCreatedMail($data));
-                    $data['subject'] = 'You have one Ticket Created!';
+                    $data['subject'] = 'You have One Ticket Created!';
                     $data['view']='mails.newTicket_admin';
                     Mail::to($user_admin)->send(new \App\Mail\TicketCreatedMail($data));
 
