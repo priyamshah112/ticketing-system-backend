@@ -21,9 +21,9 @@ class RoleSeeder extends Seeder
         ]);
 
         Role::updateOrCreate([
-            'role_name' => 'Co Admin'
+            'role_name' => 'Support'
         ],[
-            'role_name' => 'Co Admin'
+            'role_name' => 'Support'
         ]);
 
         Role::updateOrCreate([
