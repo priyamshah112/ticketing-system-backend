@@ -4,7 +4,7 @@
 
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <!--[if gte mso 9]><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->
-    
+
     <meta content="width=device-width" name="viewport" />
     <!--[if !mso]><!-->
     <meta content="IE=edge" http-equiv="X-UA-Compatible" />
@@ -18,18 +18,18 @@
             margin: 0;
             padding: 0;
         }
-        
+
         table,
         td,
         tr {
             vertical-align: top;
             border-collapse: collapse;
         }
-        
+
         * {
             line-height: inherit;
         }
-        
+
         a[x-apple-data-detectors=true] {
             color: inherit !important;
             text-decoration: none !important;
@@ -130,7 +130,7 @@
                                 </div>
                                 <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
                                 <!--[if (mso)|(IE)]></td><td align="center" width="310" style="background-color:transparent;width:310px; border-top: 0px solid transparent; border-left: 0px solid transparent; border-bottom: 0px solid transparent; border-right: 0px solid transparent;" valign="top"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top:5px; padding-bottom:5px;"><![endif]-->
-                                
+
                                 <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
                                 <!--[if (mso)|(IE)]></td></tr></table></td></tr></table><![endif]-->
                             </div>
@@ -162,7 +162,7 @@
                                                         <p style="color: #000000; font-size: 14px; line-height: 1.5; text-align: left; word-break: break-word; mso-line-height-alt: 21px; margin: 0;">  Thanks </p>
                                                         <p style="color: #000000; font-size: 14px; line-height: 1.5; text-align: left; word-break: break-word; mso-line-height-alt: 21px; margin: 0;">  National Petroleum Team </p>
                                                     </div> -->
-                                                    
+
                                                 </p>
                                             </div>
                                         </div>
