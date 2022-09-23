@@ -35,12 +35,12 @@ class UserSeeder extends Seeder
         ]);
 
         $co_admin_user = User::updateOrCreate([
-            'email' => 'support@ticketsystem.com'
+            'email' => 'coadmin@ticketsystem.com'
         ],[
-            'name' => 'Support',
-            'email' => 'support@ticketsystem.com',
+            'name' => 'Co-Admin',
+            'email' => 'coadmin@ticketsystem.com',
             'password' => bcrypt('tspassword'),
-            'userType' => 'Support',
+            'userType' => 'Co-Admin',
             'role_id' => 2,   
             'country_id' => 2          
         ]);
@@ -48,19 +48,19 @@ class UserSeeder extends Seeder
         CustomerDetails::updateOrCreate([
             'user_id' => $co_admin_user->id
         ],[
-            'firstName' => 'Support',
+            'firstName' => 'Co-Admin',
             'middleName' => '',
             'lastName' => 'One',
             'clientLocation' => 'USA'       
         ]);
 
         $co_admin_two_user = User::updateOrCreate([
-            'email' => 'supporttwo@ticketsystem.com'
+            'email' => 'coadmintwo@ticketsystem.com'
         ],[
-            'name' => 'Support',
-            'email' => 'supporttwo@ticketsystem.com',
+            'name' => 'Co-Admin',
+            'email' => 'coadmintwo@ticketsystem.com',
             'password' => bcrypt('tspassword'),
-            'userType' => 'Support',
+            'userType' => 'Co-Admin',
             'role_id' => 2,  
             'country_id' => 3           
         ]);
@@ -68,7 +68,7 @@ class UserSeeder extends Seeder
         CustomerDetails::updateOrCreate([
             'user_id' => $co_admin_two_user->id
         ],[
-            'firstName' => 'Support',
+            'firstName' => 'Co-Admin',
             'middleName' => '',
             'lastName' => 'Two',
             'clientLocation' => 'USA'       
