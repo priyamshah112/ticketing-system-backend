@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->bigInteger('country_id');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('userType', ['Admin', 'Support', 'User', 'Staff'])->nullable();
+            $table->enum('userType', ['Admin', 'Co-Admin', 'User', 'Staff'])->nullable();
             $table->integer('role_id');
             $table->integer('enable')->default();
             $table->rememberToken();
