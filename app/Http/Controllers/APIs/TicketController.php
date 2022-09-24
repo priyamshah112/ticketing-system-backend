@@ -65,7 +65,7 @@ class TicketController extends Controller
 
     public function add(Request $request)
     {
-        // return $data = $request->all();
+        $data = $request->all();
         if($request->operation == 'add'){
             $validator =  Validator::make($request->all(), [
                 'subject' => 'required',
@@ -77,10 +77,9 @@ class TicketController extends Controller
                 return $this->jsonResponse([], 0, implode(",", $errors));
             }
 
-            // DB::beginTransaction();
+            DB::beginTransaction();
             try{
                 $user_id = Auth::user()->id;
-                // $user_id = 1;
 
                 $data['created_by'] = $user_id;
                 $ticket = Ticket::create($data);
@@ -101,9 +100,7 @@ class TicketController extends Controller
                     $this->sendTicketUpdate("newTicket", $ticket->id);
                 }
 
-                // DB::commit();
-
-                // $this->createTrail($ticket->id, 'Ticket', 6, Auth::user()->name." Raised a new ticket(".$request->ticket_id.")!");
+                DB::commit();
                 return $this->jsonResponse([], 1,"Ticket Created Successfully");
             }
             catch (\Exception $e) {
