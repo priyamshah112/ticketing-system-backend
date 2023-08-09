@@ -23,27 +23,17 @@ class Controller extends BaseController
     public function sendMail($data){
         $this->data = $data;
 
-        //$this->to = explode(",",$this->data['to']);
-
-        //array_walk($this->to, create_function('&$val', '$val = trim($val);'));
         $this->to = array_filter(array_map('trim',explode(",", $this->data['to'])));
 
 
-        // Mail::send(['html'=>$data['view']], ['data' => $data['data']], function($message){
-        //     $message->to($this->to)->subject($this->data['subject']);
-        //     $message->from('zeemzachdev@gmail.com', 'Ticketing System');
-        // });
-        Mail::
-         // check for failures
-         dd($this->to);
+        Mail::send(['html'=>$data['view']], ['data' => $data['data']], function($message){
+            $message->to($this->to)->subject($this->data['subject']);
+            $message->from(env('MAIL_FROM_ADDRESS'), 'Ticketing System');
+        });
+
         if (Mail::failures()) {
-            // return response showing failed emails
             return "Failed to send Mail";
         }
-        else{
-            //dd("national@petronational.com" . " send from");
-        }
-        // $this->saveMailtoSent($data);
         return 1;
     }
 

@@ -12,10 +12,7 @@ class CreateInventoryTable extends Migration
      * @return void
      */
     public function up()
-    {
-
-        // Inventory ID	Device Name	IT Device Number	Brand	Model	Serial Number	Floor	Section	Assigned to	Status	New Inventory ID	Comments - Notes				
-        // CRX 0096	Laptop	ECICR011	Dell	Inspiron 3593	JHMT723	Piso 1	Office	Michael Fernandez	In use	CRX001					
+    {				
         Schema::create('inventory', function (Blueprint $table) {
             $table->id();
             $table->string('asset_name')->nullable();
