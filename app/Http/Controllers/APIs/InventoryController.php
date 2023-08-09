@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Inventory;
 use App\Imports\HardwareImport;
+use App\Models\Category;
 use App\Models\ErrorLog;
 use Exception;
 use Maatwebsite\Excel\Facades\Excel;
@@ -49,6 +50,18 @@ class InventoryController extends Controller
             'exportUrl' => route('exportInventory'),
             'sampleImport' => route('exportInventorySample')
         ], 1);
+    }
+
+    public function inventorySummary(Request $request)
+    {
+        $summary = Category::select('categories.id','categories.name')
+        ->selectRaw('count(CASE WHEN inventory.assigned_to IS NULL AND inventory.id IS NOT NULL THEN 1 END) as available')
+        ->selectRaw('count(CASE WHEN inventory.assigned_to IS NOT NULL AND inventory.id IS NOT NULL THEN 1 END) as assigned')
+        ->selectRaw('count(inventory.id) as total')
+        ->leftJoin('inventory', 'categories.id', '=', 'inventory.category_id')
+        ->groupBy('categories.id', 'categories.name')
+        ->get();
+        return $this->jsonResponse($summary, 1);
     }
 
     public function collection2Array($collection, $key)

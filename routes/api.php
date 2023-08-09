@@ -30,7 +30,16 @@ Route::group(['prefix' => 'v1'], function(){
 
 Route::group(['middleware' => 'auth:api','prefix' => 'v1'], function(){
     Route::group(['middleware' => 'role:admin'], function(){
+        // Invetory Category
         Route::get('/categories', [App\Http\Controllers\APIs\CategoryController::class, 'index']);
+        
+        //Inventory
+        Route::get("/inventory-summary",[App\Http\Controllers\APIs\InventoryController::class, 'inventorySummary']);
+        Route::get("/inventory",[App\Http\Controllers\APIs\InventoryController::class, 'index']);
+        Route::post("/inventory",[App\Http\Controllers\APIs\InventoryController::class, 'add']);
+        Route::post("/inventory/{id}",[App\Http\Controllers\APIs\InventoryController::class, 'update']);
+        Route::delete("/inventory/{id}",[App\Http\Controllers\APIs\InventoryController::class, 'distroy']);
+        Route::post("/inventory/import",[App\Http\Controllers\APIs\InventoryController::class, 'import']);
     });
 
     //Roles
@@ -68,14 +77,6 @@ Route::group(['middleware' => 'auth:api','prefix' => 'v1'], function(){
     Route::post("/ticket/status/close",[App\Http\Controllers\APIs\TicketController::class, 'closeTicket']);
     Route::post("/ticket/reply",[App\Http\Controllers\APIs\TicketController::class, 'reply']);
     Route::post("/ticket/assign",[App\Http\Controllers\APIs\TicketController::class, 'assignedTicket']);
-
-
-    //Inventory
-    Route::get("/inventory",[App\Http\Controllers\APIs\InventoryController::class, 'index']);
-    Route::post("/inventory",[App\Http\Controllers\APIs\InventoryController::class, 'add']);
-    Route::post("/inventory/{id}",[App\Http\Controllers\APIs\InventoryController::class, 'update']);
-    Route::delete("/inventory/{id}",[App\Http\Controllers\APIs\InventoryController::class, 'distroy']);
-    Route::post("/inventory/import",[App\Http\Controllers\APIs\InventoryController::class, 'import']);
 
     Route::get("/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'index']);
     Route::get("/dashboard/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'dashboard']);
