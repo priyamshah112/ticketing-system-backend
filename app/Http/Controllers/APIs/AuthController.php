@@ -29,14 +29,12 @@ class AuthController extends BaseController
     {
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             $user_id = Auth::user()->id;
-            $user = User::where("id", $user_id)->with('userRole.roleAccess.manager', "userDetails")->first();
+            $user = User::where("id", $user_id)->first();
             if($user->enable == 2){
                 return $this->jsonResponse([], 2, 'Account is suspended!');
             }
             else{
-                //$data['data'] =  $user;
                 $this->createTrail(0, 'User', 99);
-                $user->enable = 1;
                 $user->save();
                 $user['token'] =  $user->createToken('MyApp')->accessToken;
                 return $this->jsonResponse($user, 1, 'User login successfully.');
@@ -44,7 +42,7 @@ class AuthController extends BaseController
 
         }
         else{
-            return $this->jsonResponse([], 2, 'Username or Password is incorred!');
+            return $this->jsonResponse([], 2, 'Email or Password is incorred!');
         }
     }
 

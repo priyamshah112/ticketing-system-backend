@@ -53,14 +53,7 @@ class TicketController extends Controller
         }
 
         $users = User::where("userType", "Support")->where("enable", 1)->get();
-        //$users = User::select('id','name','email')->where("enable", 1)->get();
-        $userSoftwares = Software::where("enable", 1)->where('assigned_to', $user->id)->get();
-        $userhardwares = Inventory::where("enable", 1)->where('assigned_to', $user->id)->get();
-        return $this->jsonResponse(['tickets'=>$tickets, "support"=>$users,
-                                    'userSoftware' => $userSoftwares,
-                                    'userhardwares' => $userhardwares,
-                                    'sampleImport' => route('exportFaqSample')
-                                ], 1);
+        return $this->jsonResponse(['tickets'=> $tickets, "support"=>$users ], 1);
     }
 
     public function add(Request $request)

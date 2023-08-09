@@ -18,12 +18,10 @@ use App\Models\ErrorLog;
 use App\Models\Software;
 use App\Models\Inventory;
 use App\Models\AuditTrail;
-use App\Models\RoleAccess;
 use App\Exports\UserExport;
 use App\Imports\UserImport;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Exports\ReportExport;
 use App\Models\CustomerDetails;
 use App\Rules\MatchOldPassword;
 use App\Http\Helpers\FeederHelper;
@@ -44,8 +42,8 @@ class UserController extends Controller
         $AvailableHardwares = Inventory::whereNull('assigned_to')->where(['enable'=>1])->count();
         $AssignedHardwares = $totalHardwares - $AvailableHardwares;
 
-        $totalSoftware = Software::where(['enable'=>1])->count();
-        $AvailableSoftware = Software::where(['enable'=>1])->where('assigned_to', '=', '')->count();
+        $totalSoftware = Inventory::where(['type' => "Software", 'enable'=>1])->count();
+        $AvailableSoftware = Inventory::where(['type' => "Software", 'enable'=>1])->whereNull('assigned_to')->count();
         $totalCustomers = User::where(['enable'=>1, 'userType' => 'User'])->count();
         $faqs = FAQs::where('enable', 1)->limit(5)->get();
 
@@ -238,14 +236,14 @@ class UserController extends Controller
         $userType = $user->userType;
         $totalCustomers = User::where(['enable'=>1, 'userType' => 'User'])->count();
         $totalHardwares = Inventory::where(['enable'=>1]);
-        $totalSoftware = Software::where(['enable'=>1]);
+        $totalSoftware = Inventory::where(['type' => 'Software', 'enable'=>1]);
         $tickets = Ticket::orderBy("id", "DESC")->limit(20);
         $totalTickets = Ticket::whereIn('status', ['Closed','Pending','In Progress']);
         $totalOpenTickets = Ticket::where('status','!=', "Closed");
 
         $recentOpenTickets = Ticket::where('status','!=', "Closed")->orderBy("id", "DESC")->limit(20);
         $HardwaresList = Inventory::where("enable", 1);
-        $SoftwaresList = Software::where("enable", 1);
+        $SoftwaresList = Inventory::where(['type' => 'Software', "enable" => 1]);
 
         switch($userType){
             case 'Admin':
@@ -427,7 +425,7 @@ class UserController extends Controller
 
             if($request->has('software_ids'))
             foreach($request->software_ids as $id){
-                $inventory = Software::find($id);
+                $inventory = Inventory::find($id);
                 if($inventory){
                     if($inventory->assigned_to == ""){
                         $inventory->assigned_to = $request->user_id;
@@ -453,8 +451,8 @@ class UserController extends Controller
             $inventory = Inventory::where(['id' => $request->id])->first();
             $user = User::find($inventory->assigned_to);
 
-            Inventory::where(['id' => $request->id])->update(["assigned_to"=> null, "assigned_on" => null, 'status' => 'Available']);
-            $this->createTrail($user->id, 'User', 6, "Hardware Inventory(".$id.") Removed From ".$user->name);
+            Inventory::where(['id' => $request->id])->update(["assigned_to"=> null, "assigned_on" => null]);
+            $this->createTrail($user->id, 'User', 6, "Hardware Inventory(".$request->id.") Removed From ".$user->name);
 
             return $this->jsonResponse([], 1, "Hardware Inventory is removed from the user!");
         }
@@ -462,8 +460,8 @@ class UserController extends Controller
             $inventory = Inventory::where(['id' => $request->id])->first();
             $user = User::find($inventory->assigned_to);
 
-            Software::where(['id' => $request->id])->update(["assigned_to"=> null, "assigned_on" => null, 'status' => 'Available']);
-            $this->createTrail($user->id, 'User', 6, "Software Inventory(".$id.") Removed From ".$user->name);
+            Inventory::where(['id' => $request->id])->update(["assigned_to"=> null, "assigned_on" => null]);
+            $this->createTrail($user->id, 'User', 6, "Software Inventory(".$request->id.") Removed From ".$user->name);
 
             return $this->jsonResponse([], 1, "Software Inventory is removed from the user!");
         }
@@ -525,8 +523,15 @@ class UserController extends Controller
         if($user){
             $userInventory = Inventory::where("assigned_to", $user_id)->get();
             $availableInventory = Inventory::whereNull("assigned_to")->get();
-            $userSoftwareInventory = Software::where("assigned_to", $user_id)->get();
-            $availableSoftwareInventory = Software::whereNull("assigned_to")->get();
+            $userSoftwareInventory = Inventory::where([
+                "type" => 'Software',
+                "enable" =>  1,
+                "assigned_to"=> $user->id
+            ])->get();
+            $availableSoftwareInventory =Inventory::where([
+                "type" => 'Software',
+                "enable" =>  1
+            ])->whereNull('assigned_to')->get();;
 
             return $this->jsonResponse(['userInventory'=> $userInventory, 'availableInventory'=>$availableInventory,
                 'userSoftwareInventory' => $userSoftwareInventory, 'availableSoftwareInventory'=>$availableSoftwareInventory], 1, "");

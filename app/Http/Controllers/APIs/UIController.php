@@ -115,6 +115,6 @@ class UIController extends Controller
     }
 
     public function destroy(Request $request){  
-        return FeederHelper::distroy($request, "UI", "UI", 2 , $request->enable, 2);
+        return FeederHelper::distroy($request, "UI", "UI", 2);
     }
 }

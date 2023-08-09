@@ -72,6 +72,14 @@ class Controller extends BaseController
                 'message' => $msg
             ], 400);
         }
+        else if($status == 4){
+            return response()->json(
+            [
+                'success' => false,
+                'status_code' => 404,
+                'message' => $msg
+            ], 200);
+        }
     }
 
 

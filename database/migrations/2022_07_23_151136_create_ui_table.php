@@ -19,7 +19,7 @@ class CreateUiTable extends Migration
             $table->enum("category", ['link','file'])->nullable();
             $table->string("link")->nullable();
             $table->text("file")->nullable();
-            $table->integer("enable")->default(1);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

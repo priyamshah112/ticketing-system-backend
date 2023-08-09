@@ -55,43 +55,6 @@ class ExportController extends Controller
         return Excel::download(new ReportExport($users, $lines, $selectedPeriod, $headings, 'Users'), 'User Listing-'.Carbon::now()->format('m-d-y H:i').'.xlsx');
     }
 
-    public function exportSoftware(Request $request){
-        $inventory = Software::with('user')->where('enable', 1)
-        ->when(isset($request->name), function($q) use($request){
-            $q->where('name', 'like', '%'.$request->name.'%');
-        })->when(isset($request->status), function($q) use($request){
-            $q->where('status', $request->status);
-        })->when(isset($request->version), function($q) use($request){
-            $q->where('version', $request->version);
-        })->when(isset($request->assigned_to), function($q) use($request){
-            $q->where('assigned_to', $request->assigned_to);
-        })->when(isset($request->expiry_date), function($q) use($request){
-            $q->whereDate('expiry_date', '>=', $request->expiry_date);
-        })->get();
-
-        $lines = [];
-        $selectedPeriod = [];
-        $inventory->transform(function($i){
-            if($i->user)
-                $i->assigned_to = $i->user->name;
-            else
-                $i->assigned_to = '';
-            //unset($i->id);
-            unset($i->created_at);
-            unset($i->updated_at);
-            unset($i->enable);
-            unset($i->type);
-            unset($i->user);
-            return $i;
-
-        });
-        $headings = $this->generateColumnHeading($inventory->first()->toArray());
-        //dd($headings);
-        //dd($tickets);
-        $headings[0] = 'Software ID';
-        return Excel::download(new ReportExport($inventory, $lines, $selectedPeriod, $headings, 'Software Inventory Listing'), 'Software Inventory Listing-'.Carbon::now()->format('m-d-y H:i').'.xlsx');
-    }
-
     public function exportInventory(Request $request){
         $inventory = Inventory::with('user')->where('enable', 1)->get();
         $lines = [];
@@ -183,14 +146,6 @@ class ExportController extends Controller
         return response()->download($path, 'user-sample-list.xlsx', [
             'Content-Type' => 'application/vnd.ms-excel',
             'Content-Disposition' => 'inline; filename="' . 'user-sample-list.xlsx' . '"'
-        ]);
-    }
-
-    public function exportSoftwareSample(){
-        $path = public_path('storage/sample/software-inventory-sample-list.xlsx');
-        return response()->download($path, 'software-inventory-sample-list.xlsx', [
-            'Content-Type' => 'application/vnd.ms-excel',
-            'Content-Disposition' => 'inline; filename="' . 'software-inventory-sample-list.xlsx' . '"'
         ]);
     }
 

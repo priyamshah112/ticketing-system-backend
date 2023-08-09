@@ -22,7 +22,6 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->enum('userType', ['Admin', 'Co-Admin', 'User', 'Staff'])->nullable();
             $table->integer('role_id');
-            $table->integer('enable')->default();
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

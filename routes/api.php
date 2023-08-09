@@ -28,9 +28,11 @@ Route::group(['prefix' => 'v1'], function(){
 
 });
 
-Route::group([
-    'middleware' => 'auth:api',
-     'prefix' => 'v1'], function(){
+Route::group(['middleware' => 'auth:api','prefix' => 'v1'], function(){
+    Route::group(['middleware' => 'role:admin'], function(){
+        Route::get('/categories', [App\Http\Controllers\APIs\CategoryController::class, 'index']);
+    });
+
     //Roles
     Route::post('/change-password', [App\Http\Controllers\APIs\UserController::class, 'changePassword']);
 
@@ -68,18 +70,12 @@ Route::group([
     Route::post("/ticket/assign",[App\Http\Controllers\APIs\TicketController::class, 'assignedTicket']);
 
 
-    //Hardware Inventory
-    Route::get("/inventory/{type}",[App\Http\Controllers\APIs\InventoryController::class, 'index']);
-    Route::post("/inventory/{type}/add",[App\Http\Controllers\APIs\InventoryController::class, 'add']);
-    Route::post("/inventory/delete",[App\Http\Controllers\APIs\InventoryController::class, 'distroy']);
+    //Inventory
+    Route::get("/inventory",[App\Http\Controllers\APIs\InventoryController::class, 'index']);
+    Route::post("/inventory",[App\Http\Controllers\APIs\InventoryController::class, 'add']);
+    Route::post("/inventory/{id}",[App\Http\Controllers\APIs\InventoryController::class, 'update']);
+    Route::delete("/inventory/{id}",[App\Http\Controllers\APIs\InventoryController::class, 'distroy']);
     Route::post("/inventory/import",[App\Http\Controllers\APIs\InventoryController::class, 'import']);
-    //Route::post("/ticket/reply",[App\Http\Controllers\APIs\TicketController::class, 'reply']);
-
-    //Software Inventory
-    Route::get("/software/inventory",[App\Http\Controllers\APIs\SoftwareController::class, 'index']);
-    Route::post("/software/inventory/add",[App\Http\Controllers\APIs\SoftwareController::class, 'add']);
-    Route::post("/software/inventory/delete",[App\Http\Controllers\APIs\SoftwareController::class, 'distroy']);
-    Route::post("/software/inventory/import",[App\Http\Controllers\APIs\SoftwareController::class, 'import']);
 
     Route::get("/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'index']);
     Route::get("/dashboard/faqs",[App\Http\Controllers\APIs\FAQsController::class, 'dashboard']);
@@ -93,8 +89,6 @@ Route::group([
 
     Route::get('user-details', [ProfileController::class, 'viewProfile']);
     Route::post('/profile/update', [ProfileController::class, 'updateProfile']);
-
-
 
 });
 

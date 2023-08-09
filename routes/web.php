@@ -32,11 +32,9 @@ Route::get('/import/users', [AzureUserController::class, 'importAllUsers'])->nam
 
 
 Route::get("/export/inventory", [App\Http\Controllers\ExportController::class, 'exportInventory'])->name('exportInventory');
+Route::get("/import/inventory/sample", [App\Http\Controllers\ExportController::class, 'exportHardwareSample'])->name('exportInventorySample');
 Route::get("/export/users", [App\Http\Controllers\ExportController::class, 'exportUsers'])->name('exportUsers');
-Route::get("/export/software", [App\Http\Controllers\ExportController::class, 'exportSoftware'])->name('exportSoftware');
 Route::get("/import/sample/user", [App\Http\Controllers\ExportController::class, 'exportUserSample'])->name('exportUserSample');
-Route::get("/import/sample/software", [App\Http\Controllers\ExportController::class, 'exportSoftwareSample'])->name('exportSoftwareSample');
-Route::get("/import/sample/hardware", [App\Http\Controllers\ExportController::class, 'exportHardwareSample'])->name('exportHardwareSample');
 Route::get("/import/sample/faq", [App\Http\Controllers\ExportController::class, 'exportFaqSample'])->name('exportFaqSample');
 Route::get("/download/importedExcel/{file}", [App\Http\Controllers\ExportController::class, 'downloadErrorExcel'])->name('downloadErrorExcel');
 

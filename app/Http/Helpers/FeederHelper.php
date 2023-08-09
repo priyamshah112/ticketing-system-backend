@@ -68,13 +68,12 @@ class FeederHelper{
         }
     }
     
-    public static function distroy(Request $request,  $model, $modelName, $type = 1, $enable = 0){
+    public static function distroy(Request $request,  $model, $modelName, $type = 1){
         $model = 'App\\Models\\' .  $model;
         $id = $request['delete_id'];
         $data = $model::find($id); 
         if($data){
-            $data->enable = $enable;
-            $data->save();
+            $data->delete();
             if($type == 1)
                 return back()->with('flash_success', $modelName." is deleted successfully!");
             else

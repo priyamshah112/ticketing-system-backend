@@ -15,21 +15,21 @@ class RoleSeeder extends Seeder
     public function run()
     {
         Role::updateOrCreate([
-            'role_name' => 'Admin'
+            'name' => 'Admin'
         ],[
-            'role_name' => 'Admin'
+            'name' => 'Admin'
         ]);
 
         Role::updateOrCreate([
-            'role_name' => 'Co-Admin'
+            'name' => 'Co-Admin'
         ],[
-            'role_name' => 'Co-Admin'
+            'name' => 'Co-Admin'
         ]);
 
         Role::updateOrCreate([
-            'role_name' => 'User'
+            'name' => 'User'
         ],[
-            'role_name' => 'User'
+            'name' => 'User'
         ]);
     }
 }

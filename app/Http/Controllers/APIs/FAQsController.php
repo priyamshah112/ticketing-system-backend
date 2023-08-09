@@ -48,7 +48,7 @@ class FAQsController extends Controller
     }
 
     public function destroy(Request $request){  
-        return FeederHelper::distroy($request, "FAQs", "FAQs", 2 , $request->enable, 2);
+        return FeederHelper::distroy($request, "FAQs", "FAQs", 2);
     }
 
 }

@@ -12,10 +12,11 @@ class Inventory extends Model
     protected $table = 'inventory';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'asset_name',
+        'name',
+        'category_id',
+        'version',
+        'key',
         'device_name',
-        'hardware_type',
-        'unit_price',
         'description',
         'device_number',
         'brand',
@@ -23,18 +24,23 @@ class Inventory extends Model
         'serial_number',
         'floor',
         'section',
-        'assigned_to',
-        'assigned_on',
-        'service_tag',
         'express_service_code',
         'warranty_expire_on',
-        'status',
         'location',
         'notes',
-        'enable',
+        'expiry_date',
+        'price',
+        'type',
+        'assigned_to',
+        'assigned_on'
     ];
+    protected $hidden = [ 'deleted_at' ];
 
 
+    public function category(){
+        return $this->hasOne('App\Models\Category', 'id', 'category_id');
+    }
+    
     public function user(){
         return $this->hasOne('App\Models\User', 'id', 'assigned_to');
     }
