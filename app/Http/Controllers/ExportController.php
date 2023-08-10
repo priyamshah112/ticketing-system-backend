@@ -15,15 +15,15 @@ class ExportController extends Controller
 {
 
     public function exportUsers(Request $request){
-        $users = User::with("customerDetails")->get();
+        $users = User::with("userDetails")->get();
         $lines = [];
         $selectedPeriod = [];
         //dump($users->first());
         $users->transform(function($i){
 
-            if($i->customerDetails){
-                unset($i->customerDetails->id);
-                $i = array_merge($i->toArray(), $i->customerDetails->toArray());
+            if($i->userDetails){
+                unset($i->userDetails->id);
+                $i = array_merge($i->toArray(), $i->userDetails->toArray());
             }
             else{
                 $i = $i->toArray();

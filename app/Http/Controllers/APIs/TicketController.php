@@ -52,7 +52,7 @@ class TicketController extends Controller
             $tickets = $this->dateFilter($tickets, 'created_at', $request->created_at);
         }
 
-        $users = User::where("userType", "Support")->where("enable", 1)->get();
+        $users = User::where("userType", "Support")->get();
         return $this->jsonResponse(['tickets'=> $tickets, "support"=>$users ], 1);
     }
 

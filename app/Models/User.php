@@ -75,11 +75,7 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\Software', 'assigned_to', 'id');
     }
 
-    public function customerDetails(){
-        return $this->hasOne('App\Models\CustomerDetails', 'user_id', 'id');
-    }
-
     public function userDetails(){
-        return $this->hasOne('App\Models\CustomerDetails', 'user_id', 'id');
+        return $this->hasOne('App\Models\userDetails', 'user_id', 'id');
     }
 }

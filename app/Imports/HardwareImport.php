@@ -44,7 +44,6 @@ class HardwareImport implements ToModel, WithStartRow
                     'status' => isset($row[10]) ? $row[10] : null,
                     'location' => isset($row[11]) ? $row[11] : null,
                     'description' => isset($row[12]) ? $row[12] : null,
-                    'enable' => 1,
                 ];
 
                 //dd($data);

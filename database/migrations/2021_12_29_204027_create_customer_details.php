@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCustomerDetails extends Migration
+class CreateUserDetails extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateCustomerDetails extends Migration
      */
     public function up()
     {
-        Schema::create('customer_details', function (Blueprint $table) {
+        Schema::create('user_details', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->nullable();
             $table->string("firstName")->nullable();
@@ -39,7 +39,6 @@ class CreateCustomerDetails extends Migration
             $table->string("request")->nullable();
             $table->string("providingLaptop")->nullable();
             $table->string("hiredAs")->nullable();
-            $table->integer("enable")->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

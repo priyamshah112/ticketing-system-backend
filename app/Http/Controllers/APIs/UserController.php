@@ -22,7 +22,7 @@ use App\Exports\UserExport;
 use App\Imports\UserImport;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\CustomerDetails;
+use App\Models\UserDetails;
 use App\Rules\MatchOldPassword;
 use App\Http\Helpers\FeederHelper;
 use App\Http\Controllers\Controller;
@@ -290,15 +290,15 @@ class UserController extends Controller
 
     }
     public function index(Request $request){
-        $roles = Role::where("enable", 1)->get();
-        $user = User::select("users.*")->whereIn("users.enable", [0,1,2])->with("inventories", "userDetails")
+        $roles = Role::get();
+        $user = User::select("users.*")->with("inventories", "userDetails")
                 ->leftjoin("customer_details", "customer_details.user_id" , "=" , "users.id");
         $user = $this->checkConditions($request, $user);
         $user = $user->get();
-        $projectName = $this->collection2Array(CustomerDetails::select('projectName')->where("enable", 1)->groupBy('projectName')->get(), "projectName");
-        $clientName = $this->collection2Array(CustomerDetails::select('clientName')->where("enable", 1)->groupBy('clientName')->get(), "clientName");
-        $workLocation = $this->collection2Array(CustomerDetails::select('workLocation')->where("enable", 1)->groupBy('workLocation')->get(), "workLocation");
-        $hiredAs = $this->collection2Array(CustomerDetails::select('hiredAs')->where("enable", 1)->groupBy('hiredAs')->get(), "hiredAs");
+        $projectName = $this->collection2Array(UserDetails::select('projectName')->groupBy('projectName')->get(), "projectName");
+        $clientName = $this->collection2Array(UserDetails::select('clientName')->groupBy('clientName')->get(), "clientName");
+        $workLocation = $this->collection2Array(UserDetails::select('workLocation')->groupBy('workLocation')->get(), "workLocation");
+        $hiredAs = $this->collection2Array(UserDetails::select('hiredAs')->groupBy('hiredAs')->get(), "hiredAs");
         $exportUrl = route('exportUsers');
         return $this->jsonResponse(['user'=>$user, 'roles' => $roles, 'projectName' => $projectName, 'clientName' => $clientName,
             'workLocation' => $workLocation, 'hiredAs' => $hiredAs, 'exportUrl' => $exportUrl,
@@ -306,16 +306,16 @@ class UserController extends Controller
     }
 
     public function employee(Request $request){
-        $roles = Role::where("enable", 1)->get();
+        $roles = Role::get();
         //userType=Admin&project=&client=&location=&hiredAs=&laptop=
-        $user = User::whereIn("enable", [1,2])->where('userType', '=', "User")->with("inventories", "customerDetails")
+        $user = User::whereIn("enable", [1,2])->where('userType', '=', "User")->with("inventories", "userDetails")
                 ->leftjoin("customer_details", "customer_details.user_id" , "=" , "users.id");
         $user = $this->checkConditions($request, $user);
         $user = $user->get();
-        $projectName = $this->collection2Array(CustomerDetails::select('projectName')->where("enable", 1)->groupBy('projectName')->get(), "projectName");
-        $clientName = $this->collection2Array(CustomerDetails::select('clientName')->where("enable", 1)->groupBy('clientName')->get(), "clientName");
-        $workLocation = $this->collection2Array(CustomerDetails::select('workLocation')->where("enable", 1)->groupBy('workLocation')->get(), "workLocation");
-        $hiredAs = $this->collection2Array(CustomerDetails::select('hiredAs')->where("enable", 1)->groupBy('hiredAs')->get(), "hiredAs");
+        $projectName = $this->collection2Array(UserDetails::select('projectName')->groupBy('projectName')->get(), "projectName");
+        $clientName = $this->collection2Array(UserDetails::select('clientName')->groupBy('clientName')->get(), "clientName");
+        $workLocation = $this->collection2Array(UserDetails::select('workLocation')->groupBy('workLocation')->get(), "workLocation");
+        $hiredAs = $this->collection2Array(UserDetails::select('hiredAs')->groupBy('hiredAs')->get(), "hiredAs");
         $exportUrl = route('exportUsers');
         return $this->jsonResponse(['user'=>$user, 'roles' => $roles, 'projectName' => $projectName, 'clientName' => $clientName,
             'workLocation' => $workLocation, 'hiredAs' => $hiredAs, 'exportUrl' => $exportUrl], 1);
@@ -354,7 +354,7 @@ class UserController extends Controller
             $data['name'] = $data['firstName'].' '.$data['lastName'];
             $user = User::create($data);
             $data['user_id'] = $user->id;
-            $customer_details = CustomerDetails::create($data);
+            $customer_details = UsersDetails::create($data);
             $token = User::getToken($user);
 
             $data['user'] = $user;
@@ -382,7 +382,7 @@ class UserController extends Controller
                 //$user->country = $data['country'];
                 $user->role_id = $data['role_id'];
                 $user->save();
-                $userDetails = FeederHelper::add($request->all(), "CustomerDetails", "CustomerDetails", [], 2);
+                $userDetails = FeederHelper::add($request->all(), "UserDetails", "UserDetails", [], 2);
                 $this->createTrail($user->id, 'User', 2);
 
                 return $this->jsonResponse([], 1, "User updated successfully!");

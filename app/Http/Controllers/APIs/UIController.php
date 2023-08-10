@@ -13,17 +13,17 @@ use Illuminate\Support\Facades\Validator;
 class UIController extends Controller
 {
     public function index(Request $request){
-        $usefulInformations = UI::where("enable", 1)->orderBy("id", "ASC")->get();
+        $usefulInformations = UI::orderBy("id", "ASC")->get();
         return $this->jsonResponse(['usefulInformations' => $usefulInformations], 1);
     }
     
     public function dashboard(Request $request){
         if(isset($request->category)){
-            $usefulInformations = UI::where("enable", 1)->where('category', $request->category)->orderBy("created_at", "ASC")->limit(10)->get();            
+            $usefulInformations = UI::where('category', $request->category)->orderBy("created_at", "ASC")->limit(10)->get();            
         }
         else
         {
-            $usefulInformations = UI::where("enable", 1)->orderBy("created_at", "ASC")->limit(10)->get();
+            $usefulInformations = UI::orderBy("created_at", "ASC")->limit(10)->get();
         }
         return $this->jsonResponse(['usefulInformations' => $usefulInformations], 1);
     }

@@ -69,11 +69,7 @@ class AuthController extends BaseController
         $entry =  DB::select("SELECT * FROM `password_resets` where email = '". $request->email . "' and token = '".$request->token."'");
         //dd($entry);
         if($entry){
-            $user = User::where("email", $request->email)->first();//
-            //dd($user);
-            // if($request->has('userType') && $request->userType == "user"){
-            //     $CustomerDetails = FeederHelper::add($request->all(), "CustomerDetails", "CustomerDetails", ['user_id' => $user->id], 2);
-            // }
+            $user = User::where("email", $request->email)->first();
 
             if($user){
                $op = $user->update(['password'=> bcrypt($request->password)]);

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\CustomerDetails;
+use App\Models\UserDetails;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 class UserSeeder extends Seeder
@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             'country_id' => 1         
         ]);
 
-        CustomerDetails::updateOrCreate([
+        UserDetails::updateOrCreate([
             'user_id' => $admin_user->id
         ],[
             'firstName' => 'Admin',
@@ -45,7 +45,7 @@ class UserSeeder extends Seeder
             'country_id' => 2          
         ]);
 
-        CustomerDetails::updateOrCreate([
+        UserDetails::updateOrCreate([
             'user_id' => $co_admin_user->id
         ],[
             'firstName' => 'Co-Admin',
@@ -65,7 +65,7 @@ class UserSeeder extends Seeder
             'country_id' => 3           
         ]);
 
-        CustomerDetails::updateOrCreate([
+        UserDetails::updateOrCreate([
             'user_id' => $co_admin_two_user->id
         ],[
             'firstName' => 'Co-Admin',
@@ -85,7 +85,7 @@ class UserSeeder extends Seeder
             'country_id' => 1          
         ]);
 
-        CustomerDetails::updateOrCreate([
+        UserDetails::updateOrCreate([
             'user_id' => $user->id
         ],[
             'firstName' => 'User First',
@@ -105,7 +105,7 @@ class UserSeeder extends Seeder
             'country_id' => 1          
         ]);
 
-        CustomerDetails::updateOrCreate([
+        UserDetails::updateOrCreate([
             'user_id' => $user->id
         ],[
             'firstName' => 'User Second',

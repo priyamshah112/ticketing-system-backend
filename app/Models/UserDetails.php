@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CustomerDetails extends Model
+class UserDetails extends Model
 {
     use HasFactory;
-    protected $table = 'customer_details';
+    protected $table = 'user_details';
     protected $primaryKey = 'id';
     protected $fillable = [
         "user_id",
@@ -31,7 +31,6 @@ class CustomerDetails extends Model
         "request",
         "providingLaptop",
         "hiredAs",
-        "enable",
         "image_name"
     ];
 }

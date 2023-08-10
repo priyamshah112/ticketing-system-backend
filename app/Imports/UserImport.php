@@ -5,7 +5,7 @@ namespace App\Imports;
 use Mail;
 use App\Models\User;
 use Illuminate\Support\Str;
-use App\Models\CustomerDetails;
+use App\Models\UserDetails;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToModel;
 Use URL;
@@ -55,8 +55,7 @@ class UserImport implements ToCollection, WithHeadingRow
                         'email' => $this->checkExistOrNot($row,'email'),
                         'password' => $password,
                         'userType'=>$this->checkExistOrNot($row,'user_type'),
-                        'role_id' => 0,
-                        'enable' => 0
+                        'role_id' => 0
                     ]);
 
 
@@ -86,7 +85,7 @@ class UserImport implements ToCollection, WithHeadingRow
                     $data['providingLaptop'] = $this->checkExistOrNot($row,'providingLaptop');
                     $data['hiredAs'] = $this->checkExistOrNot($row,'hired_as');
 
-                    $customer_details = CustomerDetails::create($data);
+                    $customer_details = UserDetails::create($data);
 
                     $data = array(
                         'view' => 'mails.welcome',

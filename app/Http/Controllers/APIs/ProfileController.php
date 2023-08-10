@@ -4,7 +4,7 @@ namespace App\Http\Controllers\APIs;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProfileResource;
-use App\Models\CustomerDetails;
+use App\Models\UserDetails;
 use App\Models\ErrorLog;
 use App\Models\User;
 use App\Traits\ExceptionLog;
@@ -20,8 +20,7 @@ class ProfileController extends Controller
     public function viewProfile(Request $request)
     {
         try{
-            $userDetail = User::with('customerDetails')->find($request->user()->id);
-            // $userDetail = User::with('userdetail')->find(3);
+            $userDetail = User::with('userDetails')->find($request->user()->id);
             return ProfileResource::make($userDetail)->additional(['success' => true]);
         } catch (\Exception $ex) {
             $this->exceptionHandle($ex, 'viewProfile');
@@ -61,7 +60,7 @@ class ProfileController extends Controller
             $userData = [
                 'image_name' => $photo_name,
             ];
-            CustomerDetails::where('user_id',$userid)->update($userData);
+            UserDetails::where('user_id',$userid)->update($userData);
 
             return response()->json(['success' => true, 'message' => 'Profile Updated']);
         } catch (\Exception $ex) {
