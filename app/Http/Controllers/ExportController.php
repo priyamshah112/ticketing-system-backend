@@ -42,7 +42,7 @@ class ExportController extends Controller
             unset($i['enable']);
             unset($i['email_verified_at']);
             unset($i['role_id']);
-            unset($i['customer_details']);
+            unset($i['user_details']);
             unset($i['password']);
             unset($i['user_id']);
 

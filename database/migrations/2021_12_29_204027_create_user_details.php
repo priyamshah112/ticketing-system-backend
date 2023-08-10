@@ -51,6 +51,6 @@ class CreateUserDetails extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('customer_details');
+        Schema::dropIfExists('user_details');
     }
 }

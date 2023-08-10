@@ -25,11 +25,10 @@ use Illuminate\Http\Request;
 use App\Models\UserDetails;
 use App\Rules\MatchOldPassword;
 use App\Http\Helpers\FeederHelper;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
 
     public function dashboard(){
@@ -38,41 +37,41 @@ class UserController extends Controller
         $PendingTickets = Ticket::where('status', "Pending")->orderBy("id", "DESC")->count();
         $ClosedTickets = Ticket::where('status', "Closed")->orderBy("id", "DESC")->count();
 
-        $totalHardwares = Inventory::where(['enable'=>1])->count();
-        $AvailableHardwares = Inventory::whereNull('assigned_to')->where(['enable'=>1])->count();
+        $totalHardwares = Inventory::count();
+        $AvailableHardwares = Inventory::whereNull('assigned_to')->count();
         $AssignedHardwares = $totalHardwares - $AvailableHardwares;
 
-        $totalSoftware = Inventory::where(['type' => "Software", 'enable'=>1])->count();
-        $AvailableSoftware = Inventory::where(['type' => "Software", 'enable'=>1])->whereNull('assigned_to')->count();
-        $totalCustomers = User::where(['enable'=>1, 'userType' => 'User'])->count();
-        $faqs = FAQs::where('enable', 1)->limit(5)->get();
+        $totalSoftware = Inventory::where(['type' => "Software"])->count();
+        $AvailableSoftware = Inventory::where(['type' => "Software"])->whereNull('assigned_to')->count();
+        $totalCustomers = User::where(['userType' => 'User'])->count();
+        $faqs = FAQs::limit(5)->get();
 
 
         $OpenTicketsUSA = Ticket::where('status','=', "In Progress")
-                        ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
-                        ->where('customer_details.workLocation', 'USA')->count();
+                        ->leftjoin("user_details", 'user_details.user_id', 'tickets.created_by')
+                        ->where('user_details.workLocation', 'USA')->count();
 
         $ClosedTicketsUSA = Ticket::where('status','=', "Closed")
-                        ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
-                        ->where('customer_details.workLocation', 'USA')->count();
+                        ->leftjoin("user_details", 'user_details.user_id', 'tickets.created_by')
+                        ->where('user_details.workLocation', 'USA')->count();
 
         $OpenTicketsCR = Ticket::where('status','=', "In Progress")
-                        ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
-                        ->where('customer_details.workLocation', 'Costa Rica')->count();
+                        ->leftjoin("user_details", 'user_details.user_id', 'tickets.created_by')
+                        ->where('user_details.workLocation', 'Costa Rica')->count();
 
 
         $ClosedTicketsCR = Ticket::where('status','=', "Closed")
-                        ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
-                        ->where('customer_details.workLocation', 'Costa Rica')->count();
+                        ->leftjoin("user_details", 'user_details.user_id', 'tickets.created_by')
+                        ->where('user_details.workLocation', 'Costa Rica')->count();
 
         $ClosedTicketsIndia = Ticket::where('status','=', "Closed")
-                        ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
-                        ->where('customer_details.workLocation', 'India')->count();
+                        ->leftjoin("user_details", 'user_details.user_id', 'tickets.created_by')
+                        ->where('user_details.workLocation', 'India')->count();
 
 
         $OpenTicketsIndia = Ticket::where('status','=', "In Progress")
-                        ->leftjoin("customer_details", 'customer_details.user_id', 'tickets.created_by')
-                        ->where('customer_details.workLocation', 'India')->count();
+                        ->leftjoin("user_details", 'user_details.user_id', 'tickets.created_by')
+                        ->where('user_details.workLocation', 'India')->count();
 
         $ticketGraph = array(
             array(
@@ -185,7 +184,7 @@ class UserController extends Controller
             ),
         );
 
-        $users = User::select()->whereIn('enable',[0,1])->orderBy("created_at", 'desc')->limit(5)->get();
+        $users = User::select()->orderBy("created_at", 'desc')->limit(5)->get();
         $newUserList = array();
 
         foreach ($users as $key => $value) {
@@ -231,19 +230,18 @@ class UserController extends Controller
     public function userDashboard(){
 
         $user = Auth::user();
-        $faqs = FAQs::where('enable', 1)->limit(5)->get();
+        $faqs = FAQs::limit(5)->get();
         $user_id = $user->id;
         $userType = $user->userType;
-        $totalCustomers = User::where(['enable'=>1, 'userType' => 'User'])->count();
-        $totalHardwares = Inventory::where(['enable'=>1]);
-        $totalSoftware = Inventory::where(['type' => 'Software', 'enable'=>1]);
+        $totalHardwares = Inventory::where(['type' => 'Hardware']);
+        $totalSoftware = Inventory::where(['type' => 'Software']);
         $tickets = Ticket::orderBy("id", "DESC")->limit(20);
         $totalTickets = Ticket::whereIn('status', ['Closed','Pending','In Progress']);
         $totalOpenTickets = Ticket::where('status','!=', "Closed");
 
         $recentOpenTickets = Ticket::where('status','!=', "Closed")->orderBy("id", "DESC")->limit(20);
-        $HardwaresList = Inventory::where("enable", 1);
-        $SoftwaresList = Inventory::where(['type' => 'Software', "enable" => 1]);
+        $HardwaresList = Inventory::where("type", "Hardware");
+        $SoftwaresList = Inventory::where(['type' => 'Software']);
 
         switch($userType){
             case 'Admin':
@@ -292,7 +290,7 @@ class UserController extends Controller
     public function index(Request $request){
         $roles = Role::get();
         $user = User::select("users.*")->with("inventories", "userDetails")
-                ->leftjoin("customer_details", "customer_details.user_id" , "=" , "users.id");
+                ->leftjoin("user_details", "user_details.user_id" , "=" , "users.id");
         $user = $this->checkConditions($request, $user);
         $user = $user->get();
         $projectName = $this->collection2Array(UserDetails::select('projectName')->groupBy('projectName')->get(), "projectName");
@@ -307,9 +305,8 @@ class UserController extends Controller
 
     public function employee(Request $request){
         $roles = Role::get();
-        //userType=Admin&project=&client=&location=&hiredAs=&laptop=
-        $user = User::whereIn("enable", [1,2])->where('userType', '=', "User")->with("inventories", "userDetails")
-                ->leftjoin("customer_details", "customer_details.user_id" , "=" , "users.id");
+        $user = User::where('userType', '=', "User")->with("inventories", "userDetails")
+                ->leftjoin("user_details", "user_details.user_id" , "=" , "users.id");
         $user = $this->checkConditions($request, $user);
         $user = $user->get();
         $projectName = $this->collection2Array(UserDetails::select('projectName')->groupBy('projectName')->get(), "projectName");
@@ -349,12 +346,11 @@ class UserController extends Controller
             }
 
             $password =  Str::random(10);
-            $data['password'] = Hash::make($password); //User::generatePassword();
-            $data['enable'] = 0;
+            $data['password'] = Hash::make($password); //User::generatePassword()
             $data['name'] = $data['firstName'].' '.$data['lastName'];
             $user = User::create($data);
             $data['user_id'] = $user->id;
-            $customer_details = UsersDetails::create($data);
+            $user_details = UsersDetails::create($data);
             $token = User::getToken($user);
 
             $data['user'] = $user;
@@ -478,7 +474,7 @@ class UserController extends Controller
             if(empty($user->first())){
                 return response()->json(['success' => false, 'message' => 'User Not Found']);
             }else{
-                $user->update(['enable'=>2]);
+                $user->delete();
                 $inventory=Inventory::where('assigned_to',$userId);
                 if(!empty($inventory->first())){
                     $inventory->update([
@@ -494,12 +490,8 @@ class UserController extends Controller
         }
     }
 
-    public function createUserDetails(Request $request){
-        return $this->jsonResponse([], 1, "User Details added successfully!");
-    }
-
     public function getlist(Request $request){
-        $user = User::with('userDetails')->where('userType', 'User')->whereIn("enable", [0,1])->get();
+        $user = User::with('userDetails')->where('userType', 'User')->get();
 
         return $this->jsonResponse([
             'user' => $user,
@@ -508,7 +500,7 @@ class UserController extends Controller
     }
 
     public function getSupportUsers(Request $request){
-        $user = User::with('userDetails')->where('userType', 'Support')->whereIn("enable", [0,1])->get();
+        $user = User::with('userDetails')->where('userType', 'Support')->get();
 
         return $this->jsonResponse([
             'user' => $user,
@@ -525,12 +517,10 @@ class UserController extends Controller
             $availableInventory = Inventory::whereNull("assigned_to")->get();
             $userSoftwareInventory = Inventory::where([
                 "type" => 'Software',
-                "enable" =>  1,
                 "assigned_to"=> $user->id
             ])->get();
             $availableSoftwareInventory =Inventory::where([
                 "type" => 'Software',
-                "enable" =>  1
             ])->whereNull('assigned_to')->get();;
 
             return $this->jsonResponse(['userInventory'=> $userInventory, 'availableInventory'=>$availableInventory,
@@ -543,27 +533,11 @@ class UserController extends Controller
     }
 
     public function import(Request $request){
-        // dd();
         $path = $request->file('imports')->store('imports');
         $import = new UserImport();
-        // print_r($path);
-        // exit();
         Excel::import($import, $path);
 
         $this->createTrail(0, 'User', 5);
-        $lines = [];
-        $selectedPeriod = [];
-        // if(sizeof($import->entries) > 0){
-
-        //     $headings = $import->heading;
-        //     $p = 'Pending Entries-'.Carbon::now()->format('m-d-y H:i').'.xlsx';
-            // print_r($import);
-            // exit();
-        //     $path =  Excel::store(new UserExport($import->entries, [], [], $headings, ''), $p);
-        //     $p =  route("downloadErrorExcel", ['file' => $p]);
-        //     return $this->jsonResponse(['filePath' => $p], 0,"Some entries failed while import!");
-
-        // }
         return $this->jsonResponse([], 1,"Users Imported Successfully!");
     }
 
@@ -575,36 +549,6 @@ class UserController extends Controller
         }
         $file = File::get($path); // string
         return $file;
-    }
-
-     //Filter Conditions
-    public function checkConditions($request, $query){
-        $data = $request->all();
-        $condition = array();
-
-        foreach ($data as $key => $value) {
-            //array_push($condition, $key.' LIKE "%'.$value.'%"');
-            if($key == 'status'){
-                switch($value){
-                    case 'active':
-                        $query = $query->where('users.enable', 1);
-                        break;
-                    case 'pending':
-                        $query = $query->where('users.enable', 0);
-                        break;
-                    case 'suspended':
-                        $query = $query->where('users.enable', 2);
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-            else{
-                $query = $query->where($key, $value);
-            }
-        }
-        return $query;
     }
 
 

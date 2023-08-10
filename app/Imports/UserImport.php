@@ -85,7 +85,7 @@ class UserImport implements ToCollection, WithHeadingRow
                     $data['providingLaptop'] = $this->checkExistOrNot($row,'providingLaptop');
                     $data['hiredAs'] = $this->checkExistOrNot($row,'hired_as');
 
-                    $customer_details = UserDetails::create($data);
+                    $user_details = UserDetails::create($data);
 
                     $data = array(
                         'view' => 'mails.welcome',

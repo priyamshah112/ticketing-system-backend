@@ -76,6 +76,6 @@ class User extends Authenticatable
     }
 
     public function userDetails(){
-        return $this->hasOne('App\Models\userDetails', 'user_id', 'id');
+        return $this->hasOne('App\Models\UserDetails', 'user_id', 'id');
     }
 }
