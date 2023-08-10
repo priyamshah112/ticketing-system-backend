@@ -59,48 +59,45 @@ class TicketController extends Controller
     public function add(Request $request)
     {
         $data = $request->all();
-        if($request->operation == 'add'){
-            $validator =  Validator::make($request->all(), [
-                'subject' => 'required',
-                'status' => 'required',
-            ]);
+        $validator =  Validator::make($request->all(), [
+            'subject' => 'required',
+            'status' => 'required',
+        ]);
 
-            if ($validator->fails()){
-                $errors = $this->errorsArray($validator->errors()->toArray());
-                return $this->jsonResponse([], 0, implode(",", $errors));
+        if ($validator->fails()){
+            $errors = $this->errorsArray($validator->errors()->toArray());
+            return $this->jsonResponse([], 0, implode(",", $errors));
+        }
+
+        DB::beginTransaction();
+        try{
+            $user_id = Auth::user()->id;
+
+            $data['created_by'] = $user_id;
+            $ticket = Ticket::create($data);
+            $files = null;
+            if(!empty($request->files))
+            {
+                $files = $this->uploadFiles($request);
             }
 
-            DB::beginTransaction();
-            try{
-                $user_id = Auth::user()->id;
-
-                $data['created_by'] = $user_id;
-                $ticket = Ticket::create($data);
-                $files = null;
-                if(!empty($request->files))
-                {
-                    $files = $this->uploadFiles($request);
-                }
-
-                if($ticket){
-                     $ticketActivity = TicketActivity::create([
-                        'ticket_id' => $ticket->id,
-                        'activity_by' => Auth::id(),
-                        'message' => $request->message,
-                        'status' => $request->status,
-                        'files'=> $files
-                    ]);
-                    $this->sendTicketUpdate("newTicket", $ticket->id);
-                }
-
-                DB::commit();
-                return $this->jsonResponse([], 1,"Ticket Created Successfully");
-            }
-            catch (\Exception $e) {
-                DB::rollback();
-                return $this->jsonResponse($e->getMessage(), 3,"Something Went Wrong");
+            if($ticket){
+                 $ticketActivity = TicketActivity::create([
+                    'ticket_id' => $ticket->id,
+                    'activity_by' => Auth::id(),
+                    'message' => $request->message,
+                    'status' => $request->status,
+                    'files'=> $files
+                ]);
+                $this->sendTicketUpdate("newTicket", $ticket->id);
             }
 
+            DB::commit();
+            return $this->jsonResponse([], 1,"Ticket Created Successfully");
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return $this->jsonResponse([], 3, $e->getMessage());
         }
     }
 
@@ -115,6 +112,22 @@ class TicketController extends Controller
             $this->createTrail($ticket->id, 'Ticket', 6, Auth::user()->name." Closed ticket(".$request->ticket_id.")!");
 
             return $this->jsonResponse(['ticket'=>$ticket], 1, "Ticket Closed Successfully!");
+
+        }
+        return $this->jsonResponse([], 2, "Ticket not found!");
+    }
+   
+    public function reopenTicket(Request $request){
+        $ticket = Ticket::find($request->ticket_id);
+        if($ticket){
+            $ticket->status = 'Reopen';
+            $ticket->closed_at = NULL;
+            $ticket->closed_by = NULL;
+            $ticket->save();
+            $this->sendTicketUpdate("reopenTicket", $request->ticket_id);
+            $this->createTrail($ticket->id, 'Ticket', 6, Auth::user()->name." Reopen ticket(".$request->ticket_id.")!");
+
+            return $this->jsonResponse(['ticket'=>$ticket], 1, "Ticket Reopem Successfully!");
 
         }
         return $this->jsonResponse([], 2, "Ticket not found!");
@@ -304,6 +317,16 @@ class TicketController extends Controller
                     $data['ticket'] = $ticket->ticketActivity->last()->message;
                     $data['subject'] = 'You have one message for Support on Your Ticket!';
                     $data['view']='mails.closeTicket';
+                    Mail::to($ticket->user->email)->send(new \App\Mail\TicketCreatedMail($data));
+                    break;
+                case "reopenTicket":
+                    $data['user'] = $ticket->user;
+                    $data['ticketSubject'] = $ticket->subject;
+                    $data['resetLink'] = '#';//URL::to('/').'/password/reset/'.$token.'?email='.$user->email;
+                    $data['baseURL'] = URL::to('/');
+                    $data['ticket'] = $ticket->ticketActivity->last()->message;
+                    $data['subject'] = 'You have one message for Support on Your Ticket!';
+                    $data['view']='mails.reopenTicket';
                     Mail::to($ticket->user->email)->send(new \App\Mail\TicketCreatedMail($data));
                     break;
             }

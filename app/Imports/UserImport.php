@@ -89,7 +89,7 @@ class UserImport implements ToCollection, WithHeadingRow
 
                     $data = array(
                         'view' => 'mails.welcome',
-                        'subject' => 'Welcome to RX!',
+                        'subject' => 'Welcome to Tembo',
                         'to' => $user->email,
                         'reciever' => 'To '.$user->name,
                         'data' => $data
@@ -124,7 +124,7 @@ class UserImport implements ToCollection, WithHeadingRow
         $this->to = array_filter(array_map('trim',explode(",", $this->data['to'])));
         Mail::send(['html'=>$data['view']], ['data' => $data['data']], function($message){
             $message->to($this->to)->subject($this->data['subject']);
-            $message->from(env('MAIL_USERNAME'), 'RX ');
+            $message->from(env('MAIL_USERNAME'), 'Tembo');
         });
 
         if (Mail::failures()) {

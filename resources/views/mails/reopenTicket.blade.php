@@ -148,9 +148,8 @@
                                                     <span style="color: #000000; font-size: 16px;">
                                                         <strong>Hi {{ $data['user']->name }},</strong>
                                                         <br /><br />
-                                                        <p style="color: #000000; font-size: 14px; line-height: 1.5; text-align: left; word-break: break-word; mso-line-height-alt: 21px; margin: 0;"> {{ $data['subject'] }}, Please visit your account to check it.</p><br />
-                                                        <p style="color: #000000; font-size: 14px; line-height: 1.5; text-align: left; word-break: break-word; mso-line-height-alt: 21px; margin: 0;"> Ticket Subject: {{$data['ticketSubject']}}</p><br />
-                                                        <p style="color: #000000; font-size: 14px; line-height: 1.5; text-align: left; word-break: break-word; mso-line-height-alt: 21px; margin: 0;">Message: {{$data['ticket'] }}</p><br />
+                                                        <p style="color: #000000; font-size: 14px; line-height: 1.5; text-align: left; word-break: break-word; mso-line-height-alt: 21px; margin: 0;"> Your ticket is reopen!</p>
+                                                        <p style="color: #000000; font-size: 14px; line-height: 1.5; text-align: left; word-break: break-word; mso-line-height-alt: 21px; margin: 0;"> Ticket Subject: {{$data['ticketSubject']}}</p>
                                                         <br /><br />
                                                     </span>
                                                     <br/>

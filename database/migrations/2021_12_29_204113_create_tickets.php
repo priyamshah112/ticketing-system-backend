@@ -16,12 +16,11 @@ class CreateTickets extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string("subject")->nullable();
-            $table->integer('product_id')->nullable();
 
             $table->integer("assigned_to")->nullable();
             $table->integer("created_by")->nullable(); 
             
-            $table->enum("status", ['open', 'pending','closed'])->nullable(); // ['Pending', 'In Progress', 'Closed']
+            $table->enum("status", ['open', 'reopen', 'pending','closed'])->nullable(); // ['Pending', 'In Progress', 'Closed']
             $table->enum('priority',['low','medium','high'])->nullable();
             
             $table->string("closed_at")->nullable();

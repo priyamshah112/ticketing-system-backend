@@ -119,7 +119,7 @@ class AuthController extends BaseController
                     $data['baseURL'] = URL::to('/');
                     $data = array(
                         'view' => 'mails.forgetPasswordRequest',
-                        'subject' => 'Welcome to RX!',
+                        'subject' => 'Welcome to Tembo!',
                         'subject' => 'Password Reset Request!',
                         'to' => $user->email,
                         'reciever' => 'To '.$user->name,

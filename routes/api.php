@@ -74,6 +74,7 @@ Route::group(['middleware' => 'auth:api','prefix' => 'v1'], function(){
     Route::get("/tickets",[App\Http\Controllers\APIs\TicketController::class, 'index']);
     Route::post("/ticket/add",[App\Http\Controllers\APIs\TicketController::class, 'add']);
     Route::post("/ticket/status/close",[App\Http\Controllers\APIs\TicketController::class, 'closeTicket']);
+    Route::post("/ticket/status/reopen",[App\Http\Controllers\APIs\TicketController::class, 'reopenTicket']);
     Route::post("/ticket/reply",[App\Http\Controllers\APIs\TicketController::class, 'reply']);
     Route::post("/ticket/assign",[App\Http\Controllers\APIs\TicketController::class, 'assignedTicket']);
 

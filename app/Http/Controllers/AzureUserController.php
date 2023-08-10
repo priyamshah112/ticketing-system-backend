@@ -80,7 +80,7 @@ class AzureUserController extends Controller
             $data['baseURL'] = URL::to('/');
             $data = array(
                 'view' => 'mails.welcome',
-                'subject' => 'Welcome to RX!',
+                'subject' => 'Welcome to Tembo!',
                 'to' => $user->email,
                 'reciever' => 'To '.$user->name,
                 'data' => $data
